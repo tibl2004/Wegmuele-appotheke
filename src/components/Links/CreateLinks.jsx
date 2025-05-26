@@ -23,11 +23,7 @@ const CreateLinks = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/links', { subtitle, links }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('Inhalt erfolgreich erstellt.');
+      await axios.post('https://jugehoerig-backend.onrender.com/api/links', { subtitle, links });
       setSubtitle('');
       setLinks([{ text: '', url: '' }]);
     } catch (error) {
@@ -35,6 +31,7 @@ const CreateLinks = () => {
       alert('Fehler beim Erstellen des Inhalts.');
     }
   };
+  
 
   return (
     <div className="create-links-container">
