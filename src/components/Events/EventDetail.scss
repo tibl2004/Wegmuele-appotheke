@@ -1,0 +1,66 @@
+.event-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    color: #1e88e5;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  .detail-image {
+    width: 100%;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .detail-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e88e5;
+  }
+  
+  .detail-location,
+  .detail-date,
+  .detail-description,
+  .detail-supported {
+    font-size: 1rem;
+    color: #444;
+  }
+  
+  .detail-supported {
+    font-style: italic;
+    color: #777;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
