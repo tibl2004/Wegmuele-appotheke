@@ -1,18 +1,36 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";  // korrigierter Import
 import "./UeberUns.scss";
 
 function UeberUns() {
   const [vorstand, setVorstand] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [video, setVideo] = useState(null);
   const [loadingVorstand, setLoadingVorstand] = useState(true);
   const [loadingVideos, setLoadingVideos] = useState(true);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editLink, setEditLink] = useState("");
+
   useEffect(() => {
-    // Vorstand laden
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        jwtDecode(token);
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+
     const fetchVorstand = async () => {
       try {
-        const response = await axios.get("https://jugehoerig-backend.onrender.com/api/vorstand/public");
+        const response = await axios.get(
+          "https://jugehoerig-backend.onrender.com/api/vorstand/public"
+        );
         setVorstand(response.data);
       } catch (error) {
         console.error("Fehler beim Laden des Vorstands:", error);
@@ -21,62 +39,114 @@ function UeberUns() {
       }
     };
 
-    // YouTube-Videos laden
-    const fetchVideos = async () => {
+    const fetchVideo = async () => {
       try {
-        const response = await axios.get("https://jugehoerig-backend.onrender.com/api/youtubelink");
-        setVideos(response.data);
+        const response = await axios.get(
+          "https://jugehoerig-backend.onrender.com/api/youtubelink"
+        );
+        setVideo(response.data);
+        if (response.data && response.data.link) setEditLink(response.data.link);
       } catch (error) {
-        console.error("Fehler beim Laden der Videos:", error);
+        console.error("Fehler beim Laden des Videos:", error);
+        setVideo(null);
       } finally {
         setLoadingVideos(false);
       }
     };
 
     fetchVorstand();
-    fetchVideos();
+    fetchVideo();
   }, []);
 
-  // Hilfsfunktion: YouTube Video-ID aus Link extrahieren
   const extractVideoId = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    if (!url) return null;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return match && match[2].length === 11 ? match[2] : null;
+  };
+
+  const saveEditedLink = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "https://jugehoerig-backend.onrender.com/api/youtubelink",
+        { youtubelink: editLink },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditing(false);
+      const response = await axios.get(
+        "https://jugehoerig-backend.onrender.com/api/youtubelink"
+      );
+      setVideo(response.data);
+    } catch (error) {
+      alert("Fehler beim Speichern des Links!");
+      console.error(error);
+    }
   };
 
   if (loadingVorstand || loadingVideos) return <p>Lade Inhalte...</p>;
 
   return (
     <div className="ueberuns-container">
-      <h1>Über uns</h1>
-      {/* YouTube Video-Frame */}
-      <div className="video-frame-container">
-        {videos.length === 0 ? (
-          <p>Keine Videos verfügbar.</p>
-        ) : (
-          videos.map((video) => {
-            const videoId = extractVideoId(video.link);
-            if (!videoId) return null;
-            return (
-              <iframe
-                key={video.id}
-                width="560"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube Video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ marginBottom: "1rem" }}
-              ></iframe>
-            );
-          })
+      {/* Titel + Bearbeiten-Button nebeneinander */}
+      <div className="ueberuns-header">
+        <h1>Über uns</h1>
+        {isLoggedIn && (
+          <div className="edit-button-container-header">
+            {editing ? (
+              <>
+                <input
+                  type="text"
+                  value={editLink}
+                  onChange={(e) => setEditLink(e.target.value)}
+                  className="edit-link-input"
+                />
+                <button onClick={saveEditedLink} className="save-button">
+                  Speichern
+                </button>
+                <button onClick={() => setEditing(false)} className="cancel-button">
+                  Abbrechen
+                </button>
+              </>
+            ) : (
+              <button onClick={() => setEditing(true)} className="edit-button">
+                Bearbeiten
+              </button>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Vorstand */}
+      {/* Video-Bereich */}
+      <div className="video-frame-container">
+        {!editing && video && video.link ? (() => {
+          const videoId = extractVideoId(video.link);
+          if (!videoId) return <p>Ungültiger YouTube-Link.</p>;
+          return (
+            <iframe
+              key={video.id}
+              width="560"
+              height="315"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ marginBottom: "1rem", position: "relative" }}
+            />
+          );
+        })() : null}
+
+        {!editing && (!video || !video.link) && (
+          <p>Kein Video verfügbar.</p>
+        )}
+      </div>
+
+      {/* Vorstand-Bereich */}
       <div className="vorstand-container">
         <h2 className="vorstand-title">Unser Vorstand</h2>
+
         {vorstand.length === 0 ? (
           <p className="vorstand-empty">Keine Daten gefunden.</p>
         ) : (
