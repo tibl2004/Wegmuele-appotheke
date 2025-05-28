@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './CreateLinks.scss';
 import { FiLink, FiTrash, FiPlusCircle, FiSave } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const CreateLinks = () => {
   const [subtitle, setSubtitle] = useState('');
   const [links, setLinks] = useState([{ text: '', url: '' }]);
+  const navigate = useNavigate();
 
   const handleLinkChange = (index, field, value) => {
     const updatedLinks = [...links];
@@ -26,6 +28,7 @@ const CreateLinks = () => {
       await axios.post('https://jugehoerig-backend.onrender.com/api/links', { subtitle, links });
       setSubtitle('');
       setLinks([{ text: '', url: '' }]);
+      navigate("/links")
     } catch (error) {
       console.error('Fehler beim Erstellen:', error);
       alert('Fehler beim Erstellen des Inhalts.');
