@@ -73,17 +73,18 @@ function MeinProfil() {
     try {
       const token = localStorage.getItem("token");
       const data = new FormData();
-
-      // Felder anhängen
-      for (const key of ["vorname", "nachname", "adresse", "plz", "ort", "telefon", "email", "beschreibung", "benutzername"]) {
-        data.append(key, formData[key]);
-      }
-
-      // Bild anhängen, falls vorhanden
+  
+      // Alle Felder anhängen
+      [
+        "vorname", "nachname", "adresse", "plz", "ort",
+        "telefon", "email", "beschreibung", "benutzername"
+      ].forEach(key => data.append(key, formData[key]));
+  
+      // Nur Bild anhängen, wenn neues vorhanden
       if (formData.fotoFile) {
         data.append("foto", formData.fotoFile);
       }
-
+  
       const response = await axios.put(
         "https://jugehoerig-backend.onrender.com/api/vorstand/me",
         data,
@@ -94,16 +95,24 @@ function MeinProfil() {
           }
         }
       );
-
+  
       alert(response.data.message || "Profil erfolgreich aktualisiert.");
       setEditMode(false);
-      // Profil neu laden oder aktualisieren
-      setProfil(prev => ({ ...prev, ...formData, foto: formData.fotoPreview?.split(",")[1] || prev.foto }));
+  
+      // Profil neu setzen (inkl. neuem Bild)
+      setProfil(prev => ({
+        ...prev,
+        ...formData,
+        foto: formData.fotoFile
+          ? formData.fotoPreview.split(",")[1] // Base64 ohne Prefix
+          : prev.foto
+      }));
     } catch (err) {
       console.error("Fehler beim Aktualisieren:", err);
       alert("Fehler beim Aktualisieren des Profils.");
     }
   };
+  
 
   if (loading) return <p>Profil wird geladen...</p>;
   if (error) return <p>{error}</p>;
