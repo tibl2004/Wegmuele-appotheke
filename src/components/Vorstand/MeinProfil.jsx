@@ -96,7 +96,6 @@ function MeinProfil() {
         }
       );
   
-      alert(response.data.message || "Profil erfolgreich aktualisiert.");
       setEditMode(false);
   
       // Profil neu setzen (inkl. neuem Bild)
