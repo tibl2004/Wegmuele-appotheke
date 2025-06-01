@@ -1,45 +1,62 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { events } from './EventView';
-import './EventDetail.scss';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./EventStyles.scss";
+import { useParams, Link } from "react-router-dom";
 
-const EventDetail = () => {
-  const { title } = useParams();
-  const navigate = useNavigate();
+export default function EventDetail() {
+  const { id } = useParams();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Suche Event anhand des Titels (URL-Decodiert)
-  const event = events.find(e => e.title === decodeURIComponent(title));
+  useEffect(() => {
+    axios
+      .get(`/api/events/${id}`)
+      .then((res) => {
+        setEvent(res.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Event konnte nicht geladen werden");
+        setLoading(false);
+      });
+  }, [id]);
 
-  if (!event) {
-    return (
-      <div>
-        <p>Event nicht gefunden!</p>
-        <button onClick={() => navigate(-1)}>Zurück</button>
-      </div>
-    );
-  }
+  if (loading) return <p className="loading">Lade Event...</p>;
+  if (error) return <p className="error">{error}</p>;
+  if (!event) return null;
 
   return (
-    <div className="event-detail-container">
-      <button className="back-button" onClick={() => navigate(-1)}>← Zurück</button>
-      <img
-        src={`data:image/jpeg;base64,${event.imageBase64}`}
-        alt={event.title}
-        className="detail-image"
-      />
-      <div className="detail-content">
-        <h2 className="detail-title">{event.title}</h2>
-        <p className="detail-location">{event.location}</p>
-        <p className="detail-date">
-          {new Date(event.dateFrom).toLocaleString()} – {new Date(event.dateTo).toLocaleString()}
+    <div className="event-detail">
+      <Link to="/events" className="back-link">
+        &larr; Zurück zur Übersicht
+      </Link>
+
+      <div className="event-header">
+        <h1>{event.titel}</h1>
+        {event.bild && <img src={event.bild} alt={event.titel} />}
+      </div>
+
+      <div className="event-info">
+        <p>
+          <strong>Beschreibung:</strong> {event.beschreibung}
         </p>
-        <p className="detail-description">{event.description}</p>
-        {event.supportedBy && (
-          <p className="detail-supported">Unterstützt durch {event.supportedBy}</p>
-        )}
+        <p>
+          <strong>Ort:</strong> {event.ort}
+        </p>
+        <p>
+          <strong>Von:</strong> {new Date(event.von).toLocaleString()}
+        </p>
+        <p>
+          <strong>Bis:</strong> {new Date(event.bis).toLocaleString()}
+        </p>
+        <p>
+          <strong>Für Alle:</strong> {event.alle ? "Ja" : "Nein"}
+        </p>
+        <p>
+          <strong>Supporter Event:</strong> {event.supporter ? "Ja" : "Nein"}
+        </p>
       </div>
     </div>
   );
-};
-
-export default EventDetail;
+}
