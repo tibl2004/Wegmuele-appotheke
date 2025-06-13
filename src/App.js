@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
-import EventView from './components/Events/EventView';
+import EventList from './components/Events/EventList';
 import EventDetail from './components/Events/EventDetail';
 import Links from './components/Links/Links';
 import LoginForm from './components/Login/LoginForm';
@@ -10,6 +10,8 @@ import UeberUns from './components/Infos/UeberUns';
 import VorstandForm from './components/Vorstand/VorstandErstellen';
 import MeinProfil from './components/Vorstand/MeinProfil';
 import Vorstand from './components/Vorstand/Vorstand';
+import Home from './components/Landingpage/Home';
+import CreateEventForm from './components/Events/CreateEventForm';
 
 const App = () => {
   return (
@@ -17,18 +19,18 @@ const App = () => {
       <div className="App">
         <Navbar />
         <Routes>
-          <Route path="/events" element={<EventView />} />
-          <Route path="/event/:title" element={<EventDetail />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/events" element={<EventList />} />
+          <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/links" element={<Links />} />
           <Route path="/create-link" element={<CreateLinks />} />
           <Route path="/ueber-uns" element={<UeberUns />} />
           <Route path="/vorstand-erstellen" element={<VorstandForm />} />
           <Route path="/vorstand" element={<Vorstand />} />
-
           <Route path="/profil" element={<MeinProfil />} />
-
           <Route path="/login" element={<LoginForm />} />
-
+          <Route path="*" element={<div>Seite nicht gefunden</div>} />
+          <Route path="/event/create" element={<CreateEventForm />} />
         </Routes>
       </div>
     </Router>

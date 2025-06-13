@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";  // korrigierter Import
+import { jwtDecode } from "jwt-decode";
 import "./UeberUns.scss";
 
 function UeberUns() {
@@ -8,10 +8,10 @@ function UeberUns() {
   const [video, setVideo] = useState(null);
   const [loadingVorstand, setLoadingVorstand] = useState(true);
   const [loadingVideos, setLoadingVideos] = useState(true);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editLink, setEditLink] = useState("");
+  const [expandedStates, setExpandedStates] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -85,11 +85,14 @@ function UeberUns() {
     }
   };
 
+  const toggleExpand = (index) => {
+    setExpandedStates((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
   if (loadingVorstand || loadingVideos) return <p>Lade Inhalte...</p>;
 
   return (
     <div className="ueberuns-container">
-      {/* Titel + Bearbeiten-Button nebeneinander */}
       <div className="ueberuns-header">
         <h1>Über uns</h1>
         {isLoggedIn && (
@@ -118,7 +121,6 @@ function UeberUns() {
         )}
       </div>
 
-      {/* Video-Bereich */}
       <div className="video-frame-container">
         {!editing && video && video.link ? (() => {
           const videoId = extractVideoId(video.link);
@@ -143,7 +145,6 @@ function UeberUns() {
         )}
       </div>
 
-      {/* Vorstand-Bereich */}
       <div className="vorstand-container">
         <h2 className="vorstand-title">Unser Vorstand</h2>
 
@@ -151,26 +152,43 @@ function UeberUns() {
           <p className="vorstand-empty">Keine Daten gefunden.</p>
         ) : (
           <div className="vorstand-grid">
-            {vorstand.map((mitglied, index) => (
-              <div className="vorstand-card" key={index}>
-                <div className="vorstand-image-wrapper">
-                  {mitglied.foto && (
-                    <img
-                      src={`data:image/png;base64,${mitglied.foto}`}
-                      alt={`Foto von ${mitglied.vorname} ${mitglied.nachname}`}
-                      className="vorstand-foto"
-                    />
-                  )}
-                  <div className="vorstand-rolle-overlay">{mitglied.rolle}</div>
+            {vorstand.map((mitglied, index) => {
+              const expanded = expandedStates[index] || false;
+              return (
+                <div className="vorstand-card" key={index}>
+                  <div className="vorstand-image-wrapper">
+                    {mitglied.foto && (
+                      <img
+                        src={`data:image/png;base64,${mitglied.foto}`}
+                        alt={`Foto von ${mitglied.vorname} ${mitglied.nachname}`}
+                        className="vorstand-foto"
+                      />
+                    )}
+                    <div className="vorstand-rolle-overlay">{mitglied.rolle}</div>
+                  </div>
+                  <div className="vorstand-info">
+                    <h3 className="vorstand-name">
+                      {mitglied.vorname} {mitglied.nachname}
+                    </h3>
+                    <p className={`vorstand-beschreibung ${expanded ? "expanded" : ""}`}>
+                      {expanded
+                        ? mitglied.beschreibung
+                        : `${mitglied.beschreibung.slice(0, 160)}${
+                            mitglied.beschreibung.length > 160 ? "..." : ""
+                          }`}
+                    </p>
+                    {mitglied.beschreibung.length > 160 && (
+                      <button
+                        className="toggle-button"
+                        onClick={() => toggleExpand(index)}
+                      >
+                        {expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="vorstand-info">
-                  <h3 className="vorstand-name">
-                    {mitglied.vorname} {mitglied.nachname}
-                  </h3>
-                  <p className="vorstand-beschreibung">{mitglied.beschreibung}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

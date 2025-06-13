@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./EventStyles.scss";
+import "./EventList.scss";
 import { Link } from "react-router-dom";
 
 export default function EventList() {
@@ -10,7 +10,7 @@ export default function EventList() {
 
   useEffect(() => {
     axios
-      .get("/api/events")
+      .get("https://jugehoerig-backend.onrender.com/api/event")
       .then((res) => {
         setEvents(res.data);
         setLoading(false);
@@ -28,24 +28,24 @@ export default function EventList() {
     <div className="event-list">
       <h1>Events Übersicht</h1>
       <div className="events-grid">
-        {events.map((event) => (
-          <Link key={event.id} to={`/events/${event.id}`} className="event-card">
-            {event.bild && (
-              <div className="event-image">
-                <img src={event.bild} alt={event.titel} loading="lazy" />
+        {events.length === 0 ? (
+          <p className="no-events">Keine Events vorhanden</p>
+        ) : (
+          events.map((event) => (
+            <Link key={event.id} to={`/event/${event.id}`} className="event-card">
+              {event.bild && (
+                <div className="event-image">
+                  <img src={event.bild} alt={event.titel} loading="lazy" />
+                </div>
+              )}
+              <div className="event-content">
+                <h2>{event.titel}</h2>
+                <p>{event.beschreibung.substring(0, 100)}...</p>
+               
               </div>
-            )}
-            <div className="event-content">
-              <h2>{event.titel}</h2>
-              <p>{event.beschreibung.substring(0, 100)}...</p>
-              <p className="event-info">
-                <strong>Ort:</strong> {event.ort} |{" "}
-                <strong>Von:</strong> {new Date(event.von).toLocaleDateString()}{" "}
-                <strong>Bis:</strong> {new Date(event.bis).toLocaleDateString()}
-              </p>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );

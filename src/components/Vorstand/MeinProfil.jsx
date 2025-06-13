@@ -17,18 +17,29 @@ function MeinProfil() {
     email: "",
     beschreibung: "",
     benutzername: "",
-    fotoFile: null, // Datei-Objekt
-    fotoPreview: null // für Bildvorschau
+    fotoFile: null,
+    fotoPreview: null,
   });
 
   useEffect(() => {
     const fetchProfil = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("https://jugehoerig-backend.onrender.com/api/vorstand/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        if (!token) {
+          setError("Kein Token gefunden, bitte einloggen.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(
+          "https://jugehoerig-backend.onrender.com/api/vorstand/me",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
         setProfil(response.data);
+
         setFormData({
           vorname: response.data.vorname || "",
           nachname: response.data.nachname || "",
@@ -40,30 +51,39 @@ function MeinProfil() {
           beschreibung: response.data.beschreibung || "",
           benutzername: response.data.benutzername || "",
           fotoFile: null,
-          fotoPreview: response.data.foto ? `data:image/png;base64,${response.data.foto}` : null,
+          fotoPreview: response.data.foto
+            ? `data:image/png;base64,${response.data.foto}`
+            : null,
         });
       } catch (err) {
         console.error("Fehler beim Laden des Profils:", err);
-        setError("Profil konnte nicht geladen werden.");
+        if (err.response && err.response.status === 404) {
+          setError("Profil nicht gefunden.");
+        } else if (err.response && err.response.status === 403) {
+          setError("Zugriff verweigert.");
+        } else {
+          setError("Profil konnte nicht geladen werden.");
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchProfil();
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         fotoFile: file,
-        fotoPreview: URL.createObjectURL(file)
+        fotoPreview: URL.createObjectURL(file),
       }));
     }
   };
@@ -73,49 +93,61 @@ function MeinProfil() {
     try {
       const token = localStorage.getItem("token");
       const data = new FormData();
-  
-      // Alle Felder anhängen
+
       [
-        "vorname", "nachname", "adresse", "plz", "ort",
-        "telefon", "email", "beschreibung", "benutzername"
-      ].forEach(key => data.append(key, formData[key]));
-  
-      // Nur Bild anhängen, wenn neues vorhanden
+        "vorname",
+        "nachname",
+        "adresse",
+        "plz",
+        "ort",
+        "telefon",
+        "email",
+        "beschreibung",
+        "benutzername",
+      ].forEach((key) => data.append(key, formData[key]));
+
       if (formData.fotoFile) {
         data.append("foto", formData.fotoFile);
       }
-  
-      const response = await axios.put(
+
+      await axios.put(
         "https://jugehoerig-backend.onrender.com/api/vorstand/me",
         data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-  
+
       setEditMode(false);
-  
-      // Profil neu setzen (inkl. neuem Bild)
-      setProfil(prev => ({
+      // Profil neu laden oder lokal aktualisieren:
+      setProfil((prev) => ({
         ...prev,
         ...formData,
         foto: formData.fotoFile
-          ? formData.fotoPreview.split(",")[1] // Base64 ohne Prefix
-          : prev.foto
+          ? formData.fotoPreview.split(",")[1]
+          : prev.foto,
       }));
     } catch (err) {
       console.error("Fehler beim Aktualisieren:", err);
       alert("Fehler beim Aktualisieren des Profils.");
     }
   };
-  
 
   if (loading) return <p>Profil wird geladen...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!profil) return <p>Kein Profil gefunden.</p>;
+
+  if (profil.istImVorstand === false) {
+    return (
+      <div className="mein-profil-container">
+        <h2>Mein Profil</h2>
+        <p>Du bist als Admin eingeloggt, aber nicht im Vorstand registriert.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mein-profil-container">
@@ -132,12 +164,24 @@ function MeinProfil() {
               />
             )}
             <div className="profil-details">
-              <h3>{profil.vorname} {profil.nachname}</h3>
-              <p><b>Adresse:</b> {profil.adresse}, {profil.plz} {profil.ort}</p>
-              <p><b>Telefon:</b> {profil.telefon}</p>
-              <p><b>E-Mail:</b> {profil.email}</p>
-              <p><b>Beschreibung:</b> {profil.beschreibung}</p>
-              <p><b>Benutzername:</b> {profil.benutzername}</p>
+              <h3>
+                {profil.vorname} {profil.nachname}
+              </h3>
+              <p>
+                <b>Adresse:</b> {profil.adresse}, {profil.plz} {profil.ort}
+              </p>
+              <p>
+                <b>Telefon:</b> {profil.telefon}
+              </p>
+              <p>
+                <b>E-Mail:</b> {profil.email}
+              </p>
+              <p>
+                <b>Beschreibung:</b> {profil.beschreibung}
+              </p>
+              <p>
+                <b>Benutzername:</b> {profil.benutzername}
+              </p>
             </div>
           </div>
           <button onClick={() => setEditMode(true)}>Profil bearbeiten</button>
@@ -146,50 +190,106 @@ function MeinProfil() {
         <form className="profil-form" onSubmit={handleSubmit}>
           <label>
             Vorname:
-            <input type="text" name="vorname" value={formData.vorname} onChange={handleInputChange} required />
+            <input
+              type="text"
+              name="vorname"
+              value={formData.vorname}
+              onChange={handleInputChange}
+              required
+            />
           </label>
           <label>
             Nachname:
-            <input type="text" name="nachname" value={formData.nachname} onChange={handleInputChange} required />
+            <input
+              type="text"
+              name="nachname"
+              value={formData.nachname}
+              onChange={handleInputChange}
+              required
+            />
           </label>
           <label>
             Adresse:
-            <input type="text" name="adresse" value={formData.adresse} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="adresse"
+              value={formData.adresse}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             PLZ:
-            <input type="text" name="plz" value={formData.plz} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="plz"
+              value={formData.plz}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             Ort:
-            <input type="text" name="ort" value={formData.ort} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="ort"
+              value={formData.ort}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             Telefon:
-            <input type="text" name="telefon" value={formData.telefon} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="telefon"
+              value={formData.telefon}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             E-Mail:
-            <input type="email" name="email" value={formData.email} onChange={handleInputChange} />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             Beschreibung:
-            <textarea name="beschreibung" value={formData.beschreibung} onChange={handleInputChange} />
+            <textarea
+              name="beschreibung"
+              value={formData.beschreibung}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             Benutzername:
-            <input type="text" name="benutzername" value={formData.benutzername} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="benutzername"
+              value={formData.benutzername}
+              onChange={handleInputChange}
+            />
           </label>
           <label>
             Foto:
             <input type="file" accept="image/*" onChange={handleFileChange} />
           </label>
           {formData.fotoPreview && (
-            <img src={formData.fotoPreview} alt="Vorschau" style={{ maxWidth: "200px", marginTop: "10px" }} />
+            <img
+              src={formData.fotoPreview}
+              alt="Vorschau"
+              style={{ maxWidth: "200px", marginTop: "10px" }}
+            />
           )}
           <div style={{ marginTop: "15px" }}>
             <button type="submit">Speichern</button>
-            <button type="button" onClick={() => setEditMode(false)} style={{ marginLeft: "10px" }}>Abbrechen</button>
+            <button
+              type="button"
+              onClick={() => setEditMode(false)}
+              style={{ marginLeft: "10px" }}
+            >
+              Abbrechen
+            </button>
           </div>
         </form>
       )}

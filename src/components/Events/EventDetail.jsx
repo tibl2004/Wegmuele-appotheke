@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./EventStyles.scss";
+import "./EventDetail.scss";
 import { useParams, Link } from "react-router-dom";
 
 export default function EventDetail() {
@@ -11,7 +11,7 @@ export default function EventDetail() {
 
   useEffect(() => {
     axios
-      .get(`/api/events/${id}`)
+      .get(`https://jugehoerig-backend.onrender.com/api/event/${id}`)
       .then((res) => {
         setEvent(res.data);
         setLoading(false);

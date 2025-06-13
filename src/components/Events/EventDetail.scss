@@ -1,66 +1,78 @@
-.event-detail-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    animation: fadeIn 0.3s ease-in-out;
-  }
-  
-  .back-button {
-    background: none;
-    border: none;
-    color: #1e88e5;
+.event-detail {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Roboto, sans-serif;
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
     font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    cursor: pointer;
-  
+    color: #2b6cb0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
     &:hover {
+      color: #2c5282;
       text-decoration: underline;
     }
   }
-  
-  .detail-image {
-    width: 100%;
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .detail-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-  
-  .detail-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #1e88e5;
-  }
-  
-  .detail-location,
-  .detail-date,
-  .detail-description,
-  .detail-supported {
-    font-size: 1rem;
-    color: #444;
-  }
-  
-  .detail-supported {
-    font-style: italic;
-    color: #777;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+
+  .event-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      color: #2d3748;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
   }
-  
+
+  .event-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    p {
+      background: #f7fafc;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      font-size: 1rem;
+      color: #4a5568;
+
+      strong {
+        color: #2d3748;
+        display: block;
+        font-size: 0.95rem;
+        margin-bottom: 0.3rem;
+      }
+    }
+  }
+
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 2rem;
+  }
+
+  .error {
+    color: #e53e3e;
+  }
+}
