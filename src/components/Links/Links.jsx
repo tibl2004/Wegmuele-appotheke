@@ -6,7 +6,7 @@ import {jwtDecode} from 'jwt-decode';
 
 const Links = () => {
   const [sections, setSections] = useState([]);
-  const [isVorstand, setIsVorstand] = useState(false);
+  const [isVorstandOrAdmin, setIsVorstandOrAdmin] = useState(false);
   const [editSectionId, setEditSectionId] = useState(null);
   const [editLinkId, setEditLinkId] = useState(null);
   const [editValue, setEditValue] = useState('');
@@ -17,14 +17,23 @@ const Links = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        if (decoded.userType === 'vorstand' || decoded.userType === 'admin') {
-          setIsVorstand(true);
+        console.log('Decoded Token:', decoded);
+
+        // userTypes ist ein Array, wir checken ob "admin" oder "vorstand" drin sind
+        if (decoded.userTypes && Array.isArray(decoded.userTypes)) {
+          const hasAccess = decoded.userTypes.includes('admin') || decoded.userTypes.includes('vorstand');
+          setIsVorstandOrAdmin(hasAccess);
+          console.log('Vorstand/Admin Status:', hasAccess);
+        } else {
+          setIsVorstandOrAdmin(false);
         }
       } catch (err) {
-        console.error("Fehler beim Dekodieren des Tokens:", err);
+        console.error('Fehler beim JWT Dekodieren:', err);
+        setIsVorstandOrAdmin(false);
       }
+    } else {
+      setIsVorstandOrAdmin(false);
     }
-
     fetchSections();
   }, []);
 
@@ -33,7 +42,7 @@ const Links = () => {
       const res = await axios.get('https://jugehoerig-backend.onrender.com/api/links');
       setSections(res.data);
     } catch (error) {
-      console.error('Fehler beim Abrufen der Inhalte:', error);
+      console.error('Fehler beim Abrufen der Links:', error);
     }
   };
 
@@ -72,14 +81,14 @@ const Links = () => {
   const handleEditSection = (section) => {
     setEditSectionId(section.id);
     setEditValue(section.subtitle);
-    setEditLinkId(null); // kein Link gleichzeitig editieren
+    setEditLinkId(null);
   };
 
   const handleEditLink = (link) => {
     setEditLinkId(link.id);
     setEditValue(link.text);
     setEditUrl(link.url);
-    setEditSectionId(null); // kein Abschnitt gleichzeitig editieren
+    setEditSectionId(null);
   };
 
   const saveSectionEdit = async () => {
@@ -93,6 +102,7 @@ const Links = () => {
       setEditValue('');
     } catch (error) {
       console.error('Fehler beim Speichern des Abschnitts:', error);
+      alert('Speichern fehlgeschlagen.');
     }
   };
 
@@ -108,6 +118,7 @@ const Links = () => {
       setEditUrl('');
     } catch (error) {
       console.error('Fehler beim Speichern des Links:', error);
+      alert('Speichern fehlgeschlagen.');
     }
   };
 
@@ -115,7 +126,7 @@ const Links = () => {
     <div className="links-wrapper">
       <div className="header-with-button">
         <h2>Nützliche Links</h2>
-        {isVorstand && (
+        {isVorstandOrAdmin && (
           <button
             onClick={() => alert("Hier könnte der Link-Hinzufügen-Dialog sein")}
             className="plus-button"
@@ -142,14 +153,15 @@ const Links = () => {
             ) : (
               <>
                 <h3>{section.subtitle}</h3>
-                {isVorstand && (
+                {isVorstandOrAdmin && (
                   <>
-                    <button onClick={() => handleEditSection(section)} className="icon-button">
+                    <button onClick={() => handleEditSection(section)} className="icon-button" title="Abschnitt bearbeiten">
                       <FiEdit />
                     </button>
                     <button
                       onClick={() => handleDeleteSection(section.id)}
                       className="icon-button delete-button"
+                      title="Abschnitt löschen"
                     >
                       <FiTrash2 />
                     </button>
@@ -174,8 +186,8 @@ const Links = () => {
                       onChange={(e) => setEditUrl(e.target.value)}
                       placeholder="Link-URL"
                     />
-                    <button onClick={saveLinkEdit}><FiCheck /></button>
-                    <button onClick={() => setEditLinkId(null)}><FiX /></button>
+                    <button onClick={saveLinkEdit} title="Link speichern"><FiCheck /></button>
+                    <button onClick={() => setEditLinkId(null)} title="Abbrechen"><FiX /></button>
                   </>
                 ) : (
                   <>
@@ -183,14 +195,15 @@ const Links = () => {
                       <FiExternalLink className="link-icon" />
                       {link.text}
                     </a>
-                    {isVorstand && (
+                    {isVorstandOrAdmin && (
                       <>
-                        <button onClick={() => handleEditLink(link)} className="icon-button">
+                        <button onClick={() => handleEditLink(link)} className="icon-button" title="Link bearbeiten">
                           <FiEdit />
                         </button>
                         <button
                           onClick={() => handleDeleteLink(link.id, section.id)}
                           className="icon-button delete-button"
+                          title="Link löschen"
                         >
                           <FiTrash2 />
                         </button>
