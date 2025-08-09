@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Links.scss';
-import { FiExternalLink, FiEdit, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
+import { FiExternalLink, FiEdit, FiTrash2, FiCheck, FiX, FiPlus } from 'react-icons/fi';
 import {jwtDecode} from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const Links = () => {
   const [sections, setSections] = useState([]);
@@ -11,24 +12,20 @@ const Links = () => {
   const [editLinkId, setEditLinkId] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [editUrl, setEditUrl] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log('Decoded Token:', decoded);
-
-        // userTypes ist ein Array, wir checken ob "admin" oder "vorstand" drin sind
         if (decoded.userTypes && Array.isArray(decoded.userTypes)) {
           const hasAccess = decoded.userTypes.includes('admin') || decoded.userTypes.includes('vorstand');
           setIsVorstandOrAdmin(hasAccess);
-          console.log('Vorstand/Admin Status:', hasAccess);
         } else {
           setIsVorstandOrAdmin(false);
         }
       } catch (err) {
-        console.error('Fehler beim JWT Dekodieren:', err);
         setIsVorstandOrAdmin(false);
       }
     } else {
@@ -55,7 +52,6 @@ const Links = () => {
       });
       setSections(sections.filter(s => s.id !== sectionId));
     } catch (error) {
-      console.error('Fehler beim Löschen des Abschnitts:', error);
       alert('Löschen fehlgeschlagen.');
     }
   };
@@ -73,7 +69,6 @@ const Links = () => {
           : section
       ));
     } catch (error) {
-      console.error('Fehler beim Löschen des Links:', error);
       alert('Löschen fehlgeschlagen.');
     }
   };
@@ -101,7 +96,6 @@ const Links = () => {
       setEditSectionId(null);
       setEditValue('');
     } catch (error) {
-      console.error('Fehler beim Speichern des Abschnitts:', error);
       alert('Speichern fehlgeschlagen.');
     }
   };
@@ -117,7 +111,6 @@ const Links = () => {
       setEditValue('');
       setEditUrl('');
     } catch (error) {
-      console.error('Fehler beim Speichern des Links:', error);
       alert('Speichern fehlgeschlagen.');
     }
   };
@@ -128,11 +121,11 @@ const Links = () => {
         <h2>Nützliche Links</h2>
         {isVorstandOrAdmin && (
           <button
-            onClick={() => alert("Hier könnte der Link-Hinzufügen-Dialog sein")}
+            onClick={() => navigate('/create-link')}
             className="plus-button"
-            title="Link hinzufügen"
+            title="Neue Sektion hinzufügen"
           >
-            +
+            <FiPlus size={20} />
           </button>
         )}
       </div>
