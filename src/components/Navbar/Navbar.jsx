@@ -12,6 +12,7 @@ import {
   faFileMedical,
   faClipboardList,
   faPeopleGroup,
+  faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../logo.png";
 
@@ -93,6 +94,12 @@ function Navbar() {
             to="/events"
             text="Events"
             icon={faUser}
+            setBurgerMenuActive={setBurgerMenuActive}
+          />
+           <NavItem
+            to="/subscribe-form"
+            text="Newsletter"
+            icon={faPaperPlane}
             setBurgerMenuActive={setBurgerMenuActive}
           />
           <NavItem

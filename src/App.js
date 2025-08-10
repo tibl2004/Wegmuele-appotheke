@@ -12,6 +12,9 @@ import MeinProfil from './components/Vorstand/MeinProfil';
 import Vorstand from './components/Vorstand/Vorstand';
 import Home from './components/Landingpage/Home';
 import CreateEventForm from './components/Events/CreateEventForm';
+import NewsletterForm from './components/Newsletter/SubscribeForm';
+import SubscribeForm from './components/Newsletter/SubscribeForm';
+import NewsletterCreateForm from './components/Newsletter/NewsletterCreateForm';
 
 const App = () => {
   return (
@@ -27,6 +30,9 @@ const App = () => {
           <Route path="/ueber-uns" element={<UeberUns />} />
           <Route path="/vorstand-erstellen" element={<VorstandForm />} />
           <Route path="/vorstand" element={<Vorstand />} />
+          <Route path="/subscribe-form" element={<SubscribeForm />} />
+          <Route path="/newsletter-form" element={<NewsletterCreateForm />} />
+
           <Route path="/profil" element={<MeinProfil />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="*" element={<div>Seite nicht gefunden</div>} />
