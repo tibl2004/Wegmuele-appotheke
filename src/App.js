@@ -15,6 +15,7 @@ import CreateEventForm from './components/Events/CreateEventForm';
 import NewsletterForm from './components/Newsletter/SubscribeForm';
 import SubscribeForm from './components/Newsletter/SubscribeForm';
 import NewsletterCreateForm from './components/Newsletter/NewsletterCreateForm';
+import ImportSubscribersTable from './components/Newsletter/ImportSubcribersTable';
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/vorstand" element={<Vorstand />} />
           <Route path="/subscribe-form" element={<SubscribeForm />} />
           <Route path="/newsletter-form" element={<NewsletterCreateForm />} />
+          <Route path="/newsletter-import" element={<ImportSubscribersTable />} />
 
           <Route path="/profil" element={<MeinProfil />} />
           <Route path="/login" element={<LoginForm />} />
