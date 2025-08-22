@@ -16,6 +16,8 @@ import NewsletterForm from './components/Newsletter/SubscribeForm';
 import SubscribeForm from './components/Newsletter/SubscribeForm';
 import NewsletterCreateForm from './components/Newsletter/NewsletterCreateForm';
 import ImportSubscribersTable from './components/Newsletter/ImportSubcribersTable';
+import NewsletterSubscribersList from './components/Newsletter/NewsletterSubscribersList';
+import ImpressumCreate from './components/Impressum/ImpressumCreate';
 
 const App = () => {
   return (
@@ -27,6 +29,8 @@ const App = () => {
           <Route path="/events" element={<EventList />} />
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/links" element={<Links />} />
+          <Route path="/impressum-create" element={<ImpressumCreate />} />
+
           <Route path="/create-link" element={<CreateLinks />} />
           <Route path="/ueber-uns" element={<UeberUns />} />
           <Route path="/vorstand-erstellen" element={<VorstandForm />} />
@@ -34,6 +38,7 @@ const App = () => {
           <Route path="/subscribe-form" element={<SubscribeForm />} />
           <Route path="/newsletter-form" element={<NewsletterCreateForm />} />
           <Route path="/newsletter-import" element={<ImportSubscribersTable />} />
+          <Route path="/newsletter-subscribers" element={<NewsletterSubscribersList />} />
 
           <Route path="/profil" element={<MeinProfil />} />
           <Route path="/login" element={<LoginForm />} />

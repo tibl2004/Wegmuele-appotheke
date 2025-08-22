@@ -1,0 +1,114 @@
+.impressum-create {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 1rem;
+    font-family: "Inter", sans-serif;
+    color: #222;
+  
+    h2, h3 {
+      text-align: center;
+      font-weight: 700;
+      color: #111;
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+  
+      .form-group,
+      .form-group-inline {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        flex-direction: column;
+  
+        label {
+          font-weight: 600;
+          color: #444;
+          font-size: 0.95rem;
+        }
+  
+        input,
+        textarea,
+        select {
+          padding: 0.75rem 1rem;
+          font-size: 1rem;
+          border-radius: 0.5rem;
+          border: 1.5px solid #ccc;
+          outline: none;
+          background: #fff;
+          color: #222;
+        }
+  
+        select {
+          background: #fff;
+          color: #222;
+        }
+  
+        button {
+          padding: 0.7rem 1.4rem;
+          font-weight: 600;
+          border: none;
+          border-radius: 0.5rem;
+          background: #0077cc;
+          color: #fff;
+          cursor: pointer;
+  
+          &:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+          }
+        }
+      }
+  
+      .form-group-inline {
+        flex-direction: row;
+        gap: 1rem;
+  
+        @media (max-width: 768px) {
+          flex-direction: column;
+        }
+      }
+  
+      .links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+  
+        li {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 1rem;
+          padding: 0.3rem 0;
+  
+          a {
+            color: #0077cc;
+            text-decoration: none;
+          }
+        }
+      }
+  
+      button[type="submit"] {
+        padding: 0.9rem 2.2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 0.8rem;
+        align-self: center;
+        background: #0077cc;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+  
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+  
