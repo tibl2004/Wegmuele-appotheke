@@ -1,92 +1,93 @@
 .home-container {
-    padding: 4rem 2rem;
-    background: linear-gradient(to bottom right, #f8f9fb, #ffffff);
-    min-height: 100vh;
-  
-    h1 {
-      text-align: center;
-      font-size: 3rem;
-      margin-bottom: 4rem;
-      color: #1e1e2f;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-  }
-  
-  .vorstand-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
-    justify-items: center;
-  
-    @media (max-width: 1100px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  
-    @media (max-width: 700px) {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  .vorstand-card {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 320px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-  
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-    }
-  }
-  
-  .vorstand-foto,
-  .placeholder-foto {
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
-    border: 5px solid #e3e6ec;
-    margin-bottom: 1.2rem;
-    background-color: #f0f0f0;
-  }
-  
-  .placeholder-foto {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #999;
-    font-size: 0.9rem;
-  }
-  
-  .rolle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #3b82f6;
-    margin-bottom: 0.5rem;
-  }
-  
-  .vorstand-info {
-    h2 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-    }
-  }
-  
-  .loading,
-  .error {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-top: 3rem;
-    color: #6b7280;
-  }
-  
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 80vh; // Höhe kann angepasst werden
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.video-wrapper, .image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-video, .hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; // Video/Bild wird nicht verzerrt
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.hero-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #feb47b, #ff7e5f);
+}
+
+/* Vorstand-Grid */
+.vorstand-section {
+  padding: 50px 20px;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.vorstand-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.vorstand-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  width: 220px;
+}
+
+.vorstand-foto {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.placeholder-foto {
+  width: 100%;
+  height: 220px;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
