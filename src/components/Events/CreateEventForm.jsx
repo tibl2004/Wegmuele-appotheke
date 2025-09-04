@@ -19,11 +19,13 @@ export default function CreateEventForm() {
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
 
+  // Input-Felder ändern
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
+  // Bild zu Base64 konvertieren
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -36,23 +38,58 @@ export default function CreateEventForm() {
     reader.readAsDataURL(file);
   };
 
+  // Preisfelder ändern
   const handlePriceChange = (index, field, value) => {
     const updated = [...formData.preise];
-    updated[index][field] = value;
+    updated[index][field] = field === "kosten" ? parseFloat(value) || 0 : value;
     setFormData({ ...formData, preise: updated });
   };
 
+  // Neues Preisfeld hinzufügen
   const addPriceField = () => {
-    setFormData({ ...formData, preise: [...formData.preise, { preisbeschreibung: "", kosten: "" }] });
+    setFormData({
+      ...formData,
+      preise: [...formData.preise, { preisbeschreibung: "", kosten: "" }]
+    });
   };
 
+  // Formular absenden
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://jugehoerig-backend.onrender.com/api/event", formData);
+      const token = localStorage.getItem("token"); // JWT abrufen
+
+      const payload = { ...formData };
+      // Entferne leere Preisfelder
+      payload.preise = payload.preise.filter(p => p.preisbeschreibung && p.kosten !== "");
+
+      await axios.post(
+        "https://jugehoerig-backend.onrender.com/api/event",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       setMessage("🎉 Event erfolgreich erstellt!");
+      // Formular zurücksetzen
+      setFormData({
+        titel: "",
+        beschreibung: "",
+        ort: "",
+        von: "",
+        bis: "",
+        alle: false,
+        supporter: false,
+        bild: "",
+        bildtitel: "",
+        preise: [{ preisbeschreibung: "", kosten: "" }]
+      });
+      setPreview(null);
     } catch (err) {
-      console.error(err);
+      console.error("Fehler beim Erstellen des Events:", err.response?.data || err.message);
       setMessage("❌ Fehler beim Erstellen des Events.");
     }
   };
@@ -63,37 +100,83 @@ export default function CreateEventForm() {
       {message && <p className="form-message">{message}</p>}
       <form onSubmit={handleSubmit}>
         <label>Titel*</label>
-        <input type="text" name="titel" value={formData.titel} onChange={handleChange} required />
+        <input
+          type="text"
+          name="titel"
+          value={formData.titel}
+          onChange={handleChange}
+          required
+        />
 
         <label>Beschreibung*</label>
-        <textarea name="beschreibung" value={formData.beschreibung} onChange={handleChange} required />
+        <textarea
+          name="beschreibung"
+          value={formData.beschreibung}
+          onChange={handleChange}
+          required
+        />
 
         <label>Ort*</label>
-        <input type="text" name="ort" value={formData.ort} onChange={handleChange} required />
+        <input
+          type="text"
+          name="ort"
+          value={formData.ort}
+          onChange={handleChange}
+          required
+        />
 
         <label>Startzeit (Von)*</label>
-        <input type="datetime-local" name="von" value={formData.von} onChange={handleChange} required />
+        <input
+          type="datetime-local"
+          name="von"
+          value={formData.von}
+          onChange={handleChange}
+          required
+        />
 
         <label>Endzeit (Bis)*</label>
-        <input type="datetime-local" name="bis" value={formData.bis} onChange={handleChange} required />
+        <input
+          type="datetime-local"
+          name="bis"
+          value={formData.bis}
+          onChange={handleChange}
+          required
+        />
 
         <div className="checkbox-group">
           <label>
-            <input type="checkbox" name="alle" checked={formData.alle} onChange={handleChange} />
+            <input
+              type="checkbox"
+              name="alle"
+              checked={formData.alle}
+              onChange={handleChange}
+            />
             Für alle sichtbar
           </label>
           <label>
-            <input type="checkbox" name="supporter" checked={formData.supporter} onChange={handleChange} />
+            <input
+              type="checkbox"
+              name="supporter"
+              checked={formData.supporter}
+              onChange={handleChange}
+            />
             Supporter-Event
           </label>
         </div>
 
         <label>Bild (optional)</label>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
-        {preview && <img src={preview} alt="Vorschau" className="image-preview" />}
+        {preview && (
+          <img src={preview} alt="Vorschau" className="image-preview" />
+        )}
 
         <label>Bildtitel</label>
-        <input type="text" name="bildtitel" value={formData.bildtitel} onChange={handleChange} />
+        <input
+          type="text"
+          name="bildtitel"
+          value={formData.bildtitel}
+          onChange={handleChange}
+        />
 
         <h3>Preisoptionen</h3>
         {formData.preise.map((preis, idx) => (
@@ -102,13 +185,17 @@ export default function CreateEventForm() {
               type="text"
               placeholder="Beschreibung"
               value={preis.preisbeschreibung}
-              onChange={(e) => handlePriceChange(idx, "preisbeschreibung", e.target.value)}
+              onChange={(e) =>
+                handlePriceChange(idx, "preisbeschreibung", e.target.value)
+              }
             />
             <input
               type="number"
               placeholder="Kosten"
               value={preis.kosten}
-              onChange={(e) => handlePriceChange(idx, "kosten", e.target.value)}
+              onChange={(e) =>
+                handlePriceChange(idx, "kosten", e.target.value)
+              }
             />
           </div>
         ))}
@@ -116,7 +203,9 @@ export default function CreateEventForm() {
           + Weitere Preisoption
         </button>
 
-        <button type="submit" className="submit-btn">Event erstellen</button>
+        <button type="submit" className="submit-btn">
+          Event erstellen
+        </button>
       </form>
     </div>
   );

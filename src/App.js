@@ -19,6 +19,7 @@ import ImportSubscribersTable from './components/Newsletter/ImportSubcribersTabl
 import NewsletterSubscribersList from './components/Newsletter/NewsletterSubscribersList';
 import ImpressumCreate from './components/Impressum/ImpressumCreate';
 import Impressum from './components/Impressum/Impressum';
+import CreateBlog from './components/Blogs/CreateBlog';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/links" element={<Links />} />
           <Route path="/impressum-create" element={<ImpressumCreate />} />
+          <Route path="/create-blog" element={<CreateBlog />} />
 
           <Route path="/create-link" element={<CreateLinks />} />
           <Route path="/ueber-uns" element={<UeberUns />} />

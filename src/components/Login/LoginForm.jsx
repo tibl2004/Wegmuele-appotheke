@@ -20,7 +20,7 @@ const LoginForm = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify({ userTypes, rolle, name }));
 
-            window.location.href = "/kunden";
+            window.location.href = "/";
             console.log('Login erfolgreich:', { userTypes, rolle, name });
         } catch (error) {
             setError('Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.');

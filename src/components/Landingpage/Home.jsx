@@ -5,6 +5,7 @@ import './Home.scss';
 const Home = () => {
   const [vorstand, setVorstand] = useState([]);
   const [homeContent, setHomeContent] = useState(null);
+  const [blogs, setBlogs] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,19 +13,28 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Vorstand
         const vorstandResponse = await axios.get('https://jugehoerig-backend.onrender.com/api/vorstand/public');
         setVorstand(vorstandResponse.data);
 
+        // Home Content
         const homeResponse = await axios.get('https://jugehoerig-backend.onrender.com/api/home');
         setHomeContent(homeResponse.data);
 
+        // Events
         const eventsResponse = await axios.get('https://jugehoerig-backend.onrender.com/api/event');
-        // Nur zukünftige Events anzeigen (von > heute)
         const today = new Date();
         const futureEvents = eventsResponse.data.filter(ev => new Date(ev.von) >= today);
-        // nach Datum aufsteigend sortieren
         futureEvents.sort((a, b) => new Date(a.von) - new Date(b.von));
         setEvents(futureEvents);
+
+        // Blogs - nur die letzten 4
+        const blogsResponse = await axios.get('https://jugehoerig-backend.onrender.com/api/blogs');
+        const sortedBlogs = blogsResponse.data
+          .sort((a, b) => new Date(b.erstellt_am) - new Date(a.erstellt_am))
+          .slice(0, 4); // die 4 neuesten
+        setBlogs(sortedBlogs);
+
       } catch (err) {
         console.error(err);
         setError('Fehler beim Laden der Daten.');
@@ -45,8 +55,8 @@ const Home = () => {
       {/* ================= Hero Section ================= */}
       {homeContent && (
         <section className="hero-section">
-          {homeContent.youtubeLink && (
-            <div className="video-wrapper">
+          <div className="hero-background">
+            {homeContent.youtubeLink ? (
               <iframe
                 src={`https://www.youtube.com/embed/${homeContent.youtubeLink.split("v=")[1]}?autoplay=1&mute=1&loop=1&playlist=${homeContent.youtubeLink.split("v=")[1]}&controls=0&modestbranding=1&showinfo=0&rel=0`}
                 title="Home Video"
@@ -54,19 +64,16 @@ const Home = () => {
                 allow="autoplay; encrypted-media; clipboard-write; picture-in-picture"
                 allowFullScreen
                 className="hero-video"
-              ></iframe>
-            </div>
-          )}
-
-          {homeContent.bild && (
-            <div className="image-wrapper">
+              />
+            ) : homeContent.bild ? (
               <img
                 src={`data:image/png;base64,${homeContent.bild}`}
                 alt="Willkommen"
                 className="hero-image"
               />
-            </div>
-          )}
+            ) : null}
+            <div className="hero-overlay" />
+          </div>
 
           <div className="hero-content">
             <h1>{homeContent.willkommenText}</h1>
@@ -82,21 +89,24 @@ const Home = () => {
         </section>
       )}
 
-        {/* ================= Events ================= */}
-        <section className="events-section">
-        <h1>Bevorstehende Events</h1>
-        {events.length === 0 ? (
-          <p>Zurzeit sind keine Events geplant.</p>
+      {/* ================= Blogs ================= */}
+      <section className="blogs-section">
+        <h1>Neueste Blogeinträge</h1>
+        {blogs.length === 0 ? (
+          <p>Zurzeit sind keine Blogeinträge vorhanden.</p>
         ) : (
-          <div className="events-grid">
-            {events.map(event => (
-              <div className="event-card" key={event.id}>
-                {event.bild && (
-                  <img src={event.bild} alt={event.titel} className="event-image" />
+          <div className="blogs-grid">
+            {blogs.map(blog => (
+              <div className="blogs-card" key={blog.id}>
+                {blog.bild && (
+                  <img
+                    src={blog.bild}
+                    alt={blog.titel}
+                    className="blogs-image"
+                  />
                 )}
-                <div className="event-info">
-                  <h2>{event.titel}</h2>
-                
+                <div className="blogs-info">
+                  <h2>{blog.titel}</h2>
                 </div>
               </div>
             ))}
@@ -127,8 +137,6 @@ const Home = () => {
           ))}
         </div>
       </section>
-
-    
     </div>
   );
 };
