@@ -4,7 +4,7 @@ import {
   FiFacebook, FiInstagram, FiTwitter, FiMail, FiLinkedin, FiYoutube,
   FiGithub, FiGlobe, FiPhone
 } from "react-icons/fi";
-import "./ImpressumCreate.scss";
+import "./FooterCreate.scss";
 
 const iconOptions = [
   { name: "Facebook", component: <FiFacebook /> },
@@ -18,7 +18,7 @@ const iconOptions = [
   { name: "Telefon", component: <FiPhone /> },
 ];
 
-const ImpressumCreate = () => {
+const FooterCreate = () => {
   const [impressumData, setImpressumData] = useState({
     title: "",
     text: "",
@@ -167,4 +167,4 @@ const ImpressumCreate = () => {
   );
 };
 
-export default ImpressumCreate;
+export default FooterCreate;

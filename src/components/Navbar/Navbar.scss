@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@400;500;600&display=swap');
 
+/* Global alle Elemente mit Dosis */
+* {
+  font-family: 'Dosis', sans-serif;
+}
 
 .navbar {
   z-index: 1000;
@@ -9,7 +13,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
   transition: background 0.3s ease;
   position: relative;
 
@@ -84,7 +87,6 @@
         background-color: #ff6347;
       }
     }
-
   }
 
   // Mobile View (Burger Menu)

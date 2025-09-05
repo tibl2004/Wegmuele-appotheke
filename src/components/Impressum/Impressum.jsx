@@ -1,83 +1,59 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import * as FaIcons from "react-icons/fa"; // Alle FontAwesome Icons importieren
+import React from "react";
 import "./Impressum.scss";
 
-const Impressum = () => {
-  const [impressum, setImpressum] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchImpressum = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          "https://jugehoerig-backend.onrender.com/api/impressum",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setImpressum(res.data);
-      } catch (err) {
-        console.error(err);
-        setError("Fehler beim Laden des Impressums.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchImpressum();
-  }, []);
-
-  if (loading) return <div>Lade Impressum...</div>;
-  if (error) return <div>{error}</div>;
-  if (!impressum) return null;
-
-  // Funktion, die dynamisch Icons anhand des Namens auswählt
-  const getIcon = (iconName) => {
-    if (!iconName) return <FaIcons.FaLink />; // Standard-Fallback
-    const IconComponent = FaIcons[`Fa${iconName}`];
-    return IconComponent ? <IconComponent /> : <FaIcons.FaLink />;
-  };
-
+export default function Impressum() {
   return (
-    <div className="impressum-container">
-      {impressum.logo && (
-        <div className="impressum-logo">
-          <img src={`data:image/png;base64,${impressum.logo}`} alt="Logo" />
-        </div>
-      )}
+    <div className="impressum">
+      <h1>Impressum</h1>
 
-      <p>{impressum.text}</p>
+      <h2>Angaben gemäß § 5 TMG</h2>
+      <p>
+        Musterfirma GmbH<br />
+        Musterstraße 1<br />
+        12345 Musterstadt<br />
+        Deutschland
+      </p>
 
-      <div className="impressum-adresse">
-        <strong>Adresse:</strong>{" "}
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            impressum.adresse
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {impressum.adresse}
-        </a>
-      </div>
+      <p>Vertreten durch: Max Mustermann</p>
 
-      {impressum.links && impressum.links.length > 0 && (
-        <div className="impressum-links">
-          <h3>Weitere Links:</h3>
-          <ul>
-            {impressum.links.map((link) => (
-              <li key={link.id}>
-                <span className="impressum-link-icon">{getIcon(link.icon)}</span>{" "}
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
-                  {link.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <h2>Kontakt</h2>
+      <p>
+        Telefon: +49 (0) 123 4567890<br />
+        E-Mail: info@musterfirma.de
+      </p>
+
+      <h2>Umsatzsteuer-ID</h2>
+      <p>
+        Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: DE123456789
+      </p>
+
+      <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+      <p>
+        Max Mustermann<br />
+        Musterstraße 1<br />
+        12345 Musterstadt
+      </p>
+
+      <h2>Haftung für Inhalte</h2>
+      <p>
+        Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die
+        Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir
+        jedoch keine Gewähr übernehmen.
+      </p>
+
+      <h2>Haftung für Links</h2>
+      <p>
+        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte
+        wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte
+        auch keine Gewähr übernehmen.
+      </p>
+
+      <h2>Urheberrecht</h2>
+      <p>
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten
+        unterliegen dem deutschen Urheberrecht. Beiträge Dritter sind als solche
+        gekennzeichnet.
+      </p>
     </div>
   );
-};
-
-export default Impressum;
+}

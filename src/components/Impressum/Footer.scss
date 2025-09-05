@@ -1,0 +1,125 @@
+/* Impressum.scss */
+
+.impressum-container {
+    width: 100%;
+    padding: 40px;
+    margin-top: 200px;
+    background-color: #F59422;
+    border-radius: 12px;
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.6;
+    box-sizing: border-box;
+  
+    @media (max-width: 768px) {
+      padding: 24px;
+    }
+  
+    .impressum-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+  
+      img {
+        max-width: 150px;
+        height: auto;
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+  
+        &:hover {
+          transform: scale(1.03);
+        }
+      }
+    }
+  
+    .impressum-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+  
+    .impressum-text {
+      font-size: 1rem;
+      margin-bottom: 24px;
+      text-align: justify;
+      color: #1a1a1a;
+    }
+  
+    .impressum-adresse {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+  
+      a {
+        color: #1a1a1a;
+        text-decoration: underline;
+        transition: color 0.2s ease;
+  
+        &:hover {
+          color: #000000;
+        }
+      }
+  
+      strong {
+        color: #1a1a1a;
+      }
+    }
+  
+    .impressum-links {
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+  
+      ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+  
+        li {
+          background: #ffffff22; /* leicht transparenter Weißton für Links */
+          padding: 10px 14px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+  
+          a {
+            color: #1a1a1a;
+            font-weight: 500;
+            text-decoration: none;
+  
+            &:hover {
+              text-decoration: underline; /* kleiner, dezenter Hover */
+            }
+          }
+  
+          span[class^="icon-"] {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+          }
+  
+         
+        }
+      }
+    }
+  }
+  
+  /* Loading & Error States */
+  .impressum-loading,
+  .impressum-error {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    padding: 40px;
+  }
+  

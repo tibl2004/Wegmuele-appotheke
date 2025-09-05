@@ -17,9 +17,10 @@ import SubscribeForm from './components/Newsletter/SubscribeForm';
 import NewsletterCreateForm from './components/Newsletter/NewsletterCreateForm';
 import ImportSubscribersTable from './components/Newsletter/ImportSubcribersTable';
 import NewsletterSubscribersList from './components/Newsletter/NewsletterSubscribersList';
-import ImpressumCreate from './components/Impressum/ImpressumCreate';
-import Impressum from './components/Impressum/Impressum';
 import CreateBlog from './components/Blogs/CreateBlog';
+import FooterCreate from './components/Impressum/FooterCreate';
+import Footer from './components/Impressum/Footer';
+import Impressum from './components/Impressum/Impressum';
 
 const App = () => {
   return (
@@ -31,7 +32,7 @@ const App = () => {
           <Route path="/events" element={<EventList />} />
           <Route path="/event/:id" element={<EventDetail />} />
           <Route path="/links" element={<Links />} />
-          <Route path="/impressum-create" element={<ImpressumCreate />} />
+          <Route path="/footer-create" element={<FooterCreate />} />
           <Route path="/create-blog" element={<CreateBlog />} />
 
           <Route path="/create-link" element={<CreateLinks />} />
@@ -42,13 +43,14 @@ const App = () => {
           <Route path="/newsletter-form" element={<NewsletterCreateForm />} />
           <Route path="/newsletter-import" element={<ImportSubscribersTable />} />
           <Route path="/newsletter-subscribers" element={<NewsletterSubscribersList />} />
+          <Route path="/impressum" element={<Impressum />} />
 
           <Route path="/profil" element={<MeinProfil />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="*" element={<div>Seite nicht gefunden</div>} />
           <Route path="/event/create" element={<CreateEventForm />} />
         </Routes>
-        <Impressum />
+        <Footer />
       </div>
     </Router>
   );

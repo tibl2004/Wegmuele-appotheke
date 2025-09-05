@@ -114,6 +114,12 @@ function Navbar() {
             icon={faUser}
             setBurgerMenuActive={setBurgerMenuActive}
           />
+           <NavItem
+            to="/impressum"
+            text="Impressum"
+            icon={faUser}
+            setBurgerMenuActive={setBurgerMenuActive}
+          />
 
           {!isLoggedIn ? (
             <NavItem
