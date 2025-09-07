@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,8 +9,6 @@ import {
   faBars,
   faSignInAlt,
   faSignOutAlt,
-  faFileMedical,
-  faClipboardList,
   faPeopleGroup,
   faPaperPlane,
   faPencil,
@@ -27,19 +25,16 @@ function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
-  
-    console.log("Token:", token);
-    console.log("UserData:", userData);
-  
+
     setIsLoggedIn(!!token);
-  
+
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
         const roles = parsedUser?.userTypes || [];
-  
+
         setUserTypes(roles);
-  
+
         if (roles.includes("vorstand")) {
           setUserType("vorstand");
         } else if (roles.includes("admin")) {
@@ -57,7 +52,6 @@ function Navbar() {
       setUserType(null);
     }
   }, []);
-  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -71,12 +65,14 @@ function Navbar() {
   return (
     <nav className={`navbar ${burgerMenuActive ? "burger-menu-active" : ""}`}>
       <div className="navbar-container">
+        {/* Logo */}
         <div className="logo-box">
-          <Link to="/" onClick={() => setBurgerMenuActive(false)}>
+          <NavLink to="/" onClick={() => setBurgerMenuActive(false)}>
             <img src={logo} alt="Logo" className="logo" />
-          </Link>
+          </NavLink>
         </div>
 
+        {/* Burger Menu Icon */}
         <div
           className="menu-icon"
           onClick={() => setBurgerMenuActive(!burgerMenuActive)}
@@ -84,77 +80,26 @@ function Navbar() {
           <FontAwesomeIcon icon={faBars} />
         </div>
 
+        {/* Navigation Items */}
         <ul className={`nav-items ${burgerMenuActive ? "active" : ""}`}>
-          <NavItem
-            to="/"
-            text="Home"
-            icon={faHome}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-          <NavItem
-            to="/events"
-            text="Events"
-            icon={faUser}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-           <NavItem
-            to="/blogs"
-            text="Blog"
-            icon={faPencil}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-           <NavItem
-            to="/subscribe-form"
-            text="Newsletter"
-            icon={faPaperPlane}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-          <NavItem
-            to="/links"
-            text="Links"
-            icon={faLink}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-          <NavItem
-            to="/ueber-uns"
-            text="Über Uns"
-            icon={faUser}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
-           <NavItem
-            to="/impressum"
-            text="Impressum"
-            icon={faUser}
-            setBurgerMenuActive={setBurgerMenuActive}
-          />
+          <NavItem to="/" text="Home" icon={faHome} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/events" text="Events" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/blogs" text="Blog" icon={faPencil} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/subscribe-form" text="Newsletter" icon={faPaperPlane} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/links" text="Links" icon={faLink} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/ueber-uns" text="Über Uns" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/impressum" text="Impressum" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
 
           {!isLoggedIn ? (
-            <NavItem
-              to="/login"
-              text="Login"
-              icon={faSignInAlt}
-              setBurgerMenuActive={setBurgerMenuActive}
-            />
+            <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />
           ) : (
             <>
-             
-
               {/* Wenn user BOTH admin UND vorstand ist */}
               {userTypes.includes("admin") && userTypes.includes("vorstand") && (
-                <NavItem
-                  to="/vorstand"
-                  text="Vorstand"
-                  icon={faPeopleGroup}
-                  setBurgerMenuActive={setBurgerMenuActive}
-                />
+                <NavItem to="/vorstand" text="Vorstand" icon={faPeopleGroup} setBurgerMenuActive={setBurgerMenuActive} />
               )}
 
-              <NavItem
-                to="/profil"
-                text="Profil"
-                icon={faUser}
-                setBurgerMenuActive={setBurgerMenuActive}
-              />
+              <NavItem to="/profil" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
 
               <li>
                 <button
@@ -175,13 +120,13 @@ function Navbar() {
 function NavItem({ to, text, icon, setBurgerMenuActive }) {
   return (
     <li>
-      <Link
+      <NavLink
         to={to}
-        className="nav-link"
+        className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
         onClick={() => setBurgerMenuActive(false)}
       >
         <FontAwesomeIcon icon={icon} className="icon" /> {text}
-      </Link>
+      </NavLink>
     </li>
   );
 }
