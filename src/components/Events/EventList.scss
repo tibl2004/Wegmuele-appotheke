@@ -1,111 +1,142 @@
-// EventList.scss
-
 .event-list {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.05);
-}
+  padding: 2rem;
+  background: #f9fafb;
+  min-height: 100vh;
 
-h1 {
-  font-weight: 700;
-  font-size: 2.6rem;
-  margin-bottom: 30px;
-  text-align: center;
-  color: #1f2937; // dunkles Grau-Blau
-}
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 
-.create-button {
-  display: block;
-  margin: 0 auto 40px auto;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb, #3b82f6); // Blau Verlauf
-  border: none;
-  color: white;
-  font-size: 2.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
-  transition: background 0.3s ease;
-  user-select: none;
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #111827;
+    }
 
-  &:focus {
-    outline: 3px solid #2563eb;
-    outline-offset: 2px;
-  }
-}
+    .create-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 28px;
-  padding-bottom: 40px;
-}
-
-.event-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  user-select: none;
-
-  // Kein Hover-Effekt gewünscht -> keine :hover Regeln
-}
-
-.event-image {
-  flex-shrink: 0;
-  width: 100%;
-  height: 180px;
-  background-color: #e5e7eb; // hellgrau
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-}
-
-.event-content {
-  padding: 20px 24px 24px 24px;
-  flex-grow: 1;
-
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 12px;
-    color: #111827; // fast schwarz
-    line-height: 1.2;
+      &:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+    }
   }
 
-  p {
-    font-size: 1rem;
-    color: #4b5563; // dunkelgrau
-    line-height: 1.5;
-    margin: 0;
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
   }
-}
 
-.loading,
-.error,
-.no-events {
-  text-align: center;
-  font-size: 1.25rem;
-  color: #6b7280; // mittelgrau
-  margin-top: 40px;
-  user-select: none;
+  .event-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .event-image {
+      height: 180px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.05);
+      }
+    }
+
+    .event-content {
+      padding: 1rem;
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #111827;
+      }
+
+      p {
+        font-size: 0.95rem;
+        color: #4b5563;
+      }
+    }
+
+    .event-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem 1rem;
+      gap: 0.5rem;
+
+      button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .edit-button {
+        background: #f3f4f6;
+        color: #374151;
+
+        &:hover {
+          background: #e5e7eb;
+          transform: translateY(-2px);
+        }
+      }
+
+      .delete-button {
+        background: #ef4444;
+        color: #fff;
+
+        &:hover {
+          background: #dc2626;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+      }
+    }
+  }
+
+  .loading,
+  .error,
+  .no-events {
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.1rem;
+  }
 }
