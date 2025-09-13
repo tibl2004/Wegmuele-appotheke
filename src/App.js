@@ -23,6 +23,7 @@ import Footer from './components/Impressum/Footer';
 import Impressum from './components/Impressum/Impressum';
 import BlogList from './components/Blogs/BlogsList';
 import BlogDetail from './components/Blogs/BlogsDetail';
+import SpendenKontakt from './components/Kontakt/SpendenKontakt';
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
           <Route path="/links" element={<Links />} />
           <Route path="/footer-create" element={<FooterCreate />} />
           <Route path="/create-blog" element={<CreateBlog />} />
+          <Route path="/kontakt" element={<SpendenKontakt />} />
 
           <Route path="/create-link" element={<CreateLinks />} />
           <Route path="/ueber-uns" element={<UeberUns />} />

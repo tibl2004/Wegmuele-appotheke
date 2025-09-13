@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./EventDetail.scss";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [editMode, setEditMode] = useState(false);
+  // Startet im Edit-Mode, wenn aus EventList mit { state: { edit: true } } aufgerufen
+  const [editMode, setEditMode] = useState(location.state?.edit === true);
+
   const [formData, setFormData] = useState({
     titel: "",
     beschreibung: "",

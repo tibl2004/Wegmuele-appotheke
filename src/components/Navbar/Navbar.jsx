@@ -89,6 +89,7 @@ function Navbar() {
           <NavItem to="/links" text="Links" icon={faLink} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/ueber-uns" text="Über Uns" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/impressum" text="Impressum" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/kontakt" text="Kontakt" icon={faLink} setBurgerMenuActive={setBurgerMenuActive} />
 
           {!isLoggedIn ? (
             <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />

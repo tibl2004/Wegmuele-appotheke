@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./EventList.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default function EventList() {
@@ -33,8 +33,9 @@ export default function EventList() {
     navigate("/event/create");
   };
 
+  // ⚡ Bearbeiten -> navigiert in EventDetail direkt mit Edit-Mode
   const handleEditClick = (id) => {
-    navigate(`/event/edit/${id}`);
+    navigate(`/event/${id}`, { state: { edit: true } });
   };
 
   const handleDeleteClick = async (id) => {
@@ -47,7 +48,8 @@ export default function EventList() {
     }
   };
 
-  const canCreateEvent = userTypes.includes("admin") || userTypes.includes("vorstand");
+  const canCreateEvent =
+    userTypes.includes("admin") || userTypes.includes("vorstand");
 
   if (loading) return <p className="loading">Lade Events...</p>;
   if (error) return <p className="error">{error}</p>;
