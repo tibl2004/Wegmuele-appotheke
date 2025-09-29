@@ -24,6 +24,7 @@ import Impressum from './components/Impressum/Impressum';
 import BlogList from './components/Blogs/BlogsList';
 import BlogDetail from './components/Blogs/BlogsDetail';
 import SpendenKontakt from './components/Kontakt/SpendenKontakt';
+import NotFound from './components/Error/NotFound';
 
 const App = () => {
   return (
@@ -52,7 +53,7 @@ const App = () => {
           <Route path="/blog/:id" element={<BlogDetail />} />
           <Route path="/profil" element={<MeinProfil />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path="*" element={<div>Seite nicht gefunden</div>} />
+          <Route path="*" element={<NotFound />} />
           <Route path="/event/create" element={<CreateEventForm />} />
         </Routes>
         <Footer />

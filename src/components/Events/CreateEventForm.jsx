@@ -18,7 +18,9 @@ export default function CreateEventForm() {
   });
 
   const [formFelder, setFormFelder] = useState([
-    { feldname: "E-Mail", typ: "email", pflicht: true },
+    { feldname: "Vorname", typ: "text", pflicht: true },
+    { feldname: "Name", typ: "text", pflicht: true },
+
   ]);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
