@@ -12,75 +12,68 @@ const LoginForm = () => {
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState('');
 
-  // Schritt 1: Login
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    setError('');
-    try {
-      const response = await axios.post(
-        'https://jugehoerig-backend.onrender.com/api/login',
-        {
-          benutzername: username,
-          passwort: password
-        }
-      );
+// Schritt 1: Login
+const handleLogin = async (event) => {
+  event.preventDefault();
+  setError('');
+  try {
+    const response = await axios.post(
+      'https://jugehoerig-backend.onrender.com/api/login',
+      { benutzername: username, passwort: password }
+    );
 
-      const { token, id, userTypes, rolle, passwort_geaendert } = response.data;
+    const { token, id, userTypes, rolle, passwort_geaendert } = response.data;
 
-      if (!passwort_geaendert) {
-        // Passwort muss beim ersten Login geändert werden
-        setMussPasswortAendern(true);
-        setUserId(id);
-        setToken(token);
-      } else {
-        // Normaler Login
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify({ userTypes, rolle, id }));
-        window.location.href = '/';
-      }
-    } catch (error) {
-      setError(
-        error.response?.data?.error ||
-          'Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.'
-      );
+    if (passwort_geaendert === 0) {   // 👈 fix
+      // Passwort muss beim ersten Login geändert werden
+      setMussPasswortAendern(true);
+      setUserId(id);
+      setToken(token);
+    } else {
+      // Normaler Login
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify({ userTypes, rolle, id }));
+      window.location.href = '/';
     }
-  };
+  } catch (error) {
+    setError(
+      error.response?.data?.error ||
+        'Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.'
+    );
+  }
+};
 
-  // Schritt 2: Passwort ändern beim ersten Login
-  const handleChangePassword = async (event) => {
-    event.preventDefault();
-    setError('');
+// Schritt 2: Passwort ändern beim ersten Login
+const handleChangePassword = async (event) => {
+  event.preventDefault();
+  setError('');
 
-    if (!newPassword || !confirmPassword) {
-      setError('Bitte geben Sie das neue Passwort zweimal ein.');
-      return;
-    }
+  if (!newPassword || !confirmPassword) {
+    setError('Bitte geben Sie das neue Passwort zweimal ein.');
+    return;
+  }
 
-    if (newPassword !== confirmPassword) {
-      setError('Die Passwörter stimmen nicht überein.');
-      return;
-    }
+  if (newPassword !== confirmPassword) {
+    setError('Die Passwörter stimmen nicht überein.');
+    return;
+  }
 
-    try {
-      await axios.put(
-        'https://jugehoerig-backend.onrender.com/api/vorstand/change-password-erstlogin',
-        { neuesPasswort: newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    await axios.put(
+      'https://jugehoerig-backend.onrender.com/api/login/change-password-erstlogin',
+      { neuesPasswort: newPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      alert('Passwort erfolgreich geändert. Bitte loggen Sie sich erneut ein.');
-      // Reset der Formularwerte
-      setMussPasswortAendern(false);
-      setUsername('');
-      setPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (error) {
-      setError(
-        error.response?.data?.error || 'Fehler beim Ändern des Passworts.'
-      );
-    }
-  };
+    alert('Passwort erfolgreich geändert. Bitte loggen Sie sich erneut ein.');
+    window.location.href = '/login'; // 👈 direkter Redirect zurück
+  } catch (error) {
+    setError(
+      error.response?.data?.error || 'Fehler beim Ändern des Passworts.'
+    );
+  }
+};
+
 
   return (
     <div className="login-container">

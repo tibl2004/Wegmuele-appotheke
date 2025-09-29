@@ -1,128 +1,140 @@
 .create-event-form {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 2.5rem;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  font-family: "Segoe UI", sans-serif;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: #f9fafb;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   h2 {
-    text-align: center;
     font-size: 1.8rem;
-    color: #1a202c;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    color: #111827;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-id {
+    font-size: 0.95rem;
+    color: #6b7280;
   }
 
   .form-message {
-    text-align: center;
-    font-weight: 600;
-    padding: 0.75rem;
-    border-radius: 12px;
-    background: #edf2f7;
-    color: #2b6cb0;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: #eef2ff;
+    color: #4338ca;
   }
 
   form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 1.2rem;
 
     label {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      color: #2d3748;
-      margin-bottom: 0.3rem;
+      color: #374151;
       display: block;
+      margin-bottom: 0.3rem;
     }
 
     input,
-    textarea {
-      padding: 0.85rem;
-      border: 1px solid #e2e8f0;
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #d1d5db;
       border-radius: 10px;
-      font-size: 1rem;
-      background: #f9fafb;
-      color: #2d3748;
+      font-size: 0.95rem;
+      background: #fff;
+      color: #111827;
       outline: none;
     }
 
     textarea {
+      min-height: 100px;
       resize: vertical;
-      min-height: 120px;
     }
 
     .checkbox-group {
       display: flex;
-      gap: 2rem;
-      margin-top: 0.5rem;
+      gap: 1.5rem;
+      align-items: center;
 
       label {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #4a5568;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        color: #374151;
+      }
 
-        input {
-          accent-color: #2b6cb0;
-          width: 18px;
-          height: 18px;
-        }
+      input[type="checkbox"] {
+        transform: scale(1.1);
+        accent-color: #4f46e5;
       }
     }
 
     .image-preview {
-      width: 100%;
+      margin-top: 0.5rem;
+      width: 180px;
       height: auto;
-      max-height: 250px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
       object-fit: cover;
-      border-radius: 14px;
-      margin-top: 0.75rem;
-      border: 1px solid #e2e8f0;
+      display: block;
     }
 
     h3 {
-      margin-top: 1rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #2d3748;
+      margin-top: 1rem;
+      color: #111827;
     }
 
-    .price-field {
+    .price-field,
+    .form-field {
       display: flex;
-      flex-direction: row;
       gap: 1rem;
+      align-items: center;
 
-      input {
+      input,
+      select {
         flex: 1;
+      }
+
+      label {
+        font-size: 0.85rem;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
       }
     }
 
-    .add-price {
-      margin-top: 0.5rem;
-      background: #edf2f7;
-      color: #2b6cb0;
-      border: none;
-      border-radius: 10px;
+    .add-price,
+    button[type="button"] {
       padding: 0.6rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 500;
+      background: #f3f4f6;
+      color: #111827;
       cursor: pointer;
     }
 
     .submit-btn {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: #2b6cb0;
-      color: #fff;
-      font-size: 1rem;
+      margin-top: 1.5rem;
+      padding: 0.9rem 1.2rem;
       border: none;
       border-radius: 12px;
+      font-size: 1rem;
       font-weight: 600;
-      letter-spacing: 0.5px;
+      background: #4f46e5;
+      color: #fff;
       cursor: pointer;
     }
   }

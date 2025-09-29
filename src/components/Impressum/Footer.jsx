@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as FaIcons from "react-icons/fa"; // Alle FontAwesome Icons importieren
+import * as FaIcons from "react-icons/fa";
 import "./Footer.scss";
 
 const Footer = () => {
@@ -8,6 +8,10 @@ const Footer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [form, setForm] = useState({ name: "", email: "", nachricht: "" });
+  const [formStatus, setFormStatus] = useState("");
+
+  // Impressum laden
   useEffect(() => {
     const fetchImpressum = async () => {
       try {
@@ -27,55 +31,126 @@ const Footer = () => {
     fetchImpressum();
   }, []);
 
-  if (loading) return <div>Lade Impressum...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="impressum-loading">Lade Impressum...</div>;
+  if (error) return <div className="impressum-error">{error}</div>;
   if (!impressum) return null;
 
-  // Funktion, die dynamisch Icons anhand des Namens auswählt
   const getIcon = (iconName) => {
-    if (!iconName) return <FaIcons.FaLink />; // Standard-Fallback
+    if (!iconName) return <FaIcons.FaLink />;
     const IconComponent = FaIcons[`Fa${iconName}`];
     return IconComponent ? <IconComponent /> : <FaIcons.FaLink />;
   };
 
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.name || !form.email || !form.nachricht) {
+      setFormStatus("Bitte füllen Sie alle Pflichtfelder aus.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://jugehoerig-backend.onrender.com/api/anfrage",
+        form
+      );
+
+      if (response.status === 201) {
+        setFormStatus(
+          "Vielen Dank! Ihre Anfrage wurde erfolgreich versendet. Bitte antworten Sie nicht auf diese E-Mail. Für Anliegen schreiben Sie bitte an info@jugehoerig.ch."
+        );
+        setForm({ name: "", email: "", nachricht: "" });
+      } else {
+        setFormStatus(
+          "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+        );
+      }
+    } catch (err) {
+      console.error("Fehler beim Senden der Anfrage:", err);
+      setFormStatus(
+        "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+      );
+    }
+  };
+
   return (
-    <div className="impressum-container">
-      {impressum.logo && (
-        <div className="impressum-logo">
-          <img src={`data:image/png;base64,${impressum.logo}`} alt="Logo" />
+    <div className="footer-container">
+      {/* Impressum links */}
+      <div className="impressum-container">
+        {impressum.logo && (
+          <div className="impressum-logo">
+            <img src={`data:image/png;base64,${impressum.logo}`} alt="Logo" />
+          </div>
+        )}
+
+        <p>{impressum.text}</p>
+
+        <div className="impressum-adresse">
+          <strong>Adresse:</strong>{" "}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              impressum.adresse
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {impressum.adresse}
+          </a>
         </div>
-      )}
 
-      <p>{impressum.text}</p>
-
-      <div className="impressum-adresse">
-        <strong>Adresse:</strong>{" "}
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            impressum.adresse
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {impressum.adresse}
-        </a>
+        {impressum.links && impressum.links.length > 0 && (
+          <div className="impressum-links">
+            <h3>Weitere Links:</h3>
+            <ul>
+              {impressum.links.map((link) => (
+                <li key={link.id}>
+                  <span className="impressum-link-icon">{getIcon(link.icon)}</span>{" "}
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
-      {impressum.links && impressum.links.length > 0 && (
-        <div className="impressum-links">
-          <h3>Weitere Links:</h3>
-          <ul>
-            {impressum.links.map((link) => (
-              <li key={link.id}>
-                <span className="impressum-link-icon">{getIcon(link.icon)}</span>{" "}
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
-                  {link.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Anfrageformular rechts */}
+      <div className="anfrage-formular">
+        <h3>Schreiben Sie uns</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Ihr Name*"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Ihre E-Mail*"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <textarea
+            name="nachricht"
+            placeholder="Ihre Nachricht*"
+            rows="4"
+            value={form.nachricht}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Absenden</button>
+        </form>
+        {formStatus && <p className="form-status">{formStatus}</p>}
+      </div>
     </div>
   );
 };

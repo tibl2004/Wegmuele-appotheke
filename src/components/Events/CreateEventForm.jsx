@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CreateEventForm.scss";
 
 export default function CreateEventForm() {
+  const [eventId, setEventId] = useState(null);
   const [formData, setFormData] = useState({
     titel: "",
     beschreibung: "",
@@ -13,11 +14,26 @@ export default function CreateEventForm() {
     supporter: false,
     bild: "",
     bildtitel: "",
-    preise: [{ preisbeschreibung: "", kosten: "" }]
+    preise: [{ preisbeschreibung: "", kosten: "" }],
   });
 
+  const [formFelder, setFormFelder] = useState([
+    { feldname: "E-Mail", typ: "email", pflicht: true },
+  ]);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  // Nächste Event-ID laden
+  useEffect(() => {
+    axios
+      .get("https://jugehoerig-backend.onrender.com/api/events/nextId", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setEventId(res.data.nextId))
+      .catch((err) => console.error("Fehler beim Laden der Event-ID:", err));
+  }, [token]);
 
   // Input-Felder ändern
   const handleChange = (e) => {
@@ -25,11 +41,10 @@ export default function CreateEventForm() {
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  // Bild zu Base64 konvertieren
+  // Bild-Upload zu Base64
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData({ ...formData, bild: reader.result });
@@ -49,32 +64,52 @@ export default function CreateEventForm() {
   const addPriceField = () => {
     setFormData({
       ...formData,
-      preise: [...formData.preise, { preisbeschreibung: "", kosten: "" }]
+      preise: [...formData.preise, { preisbeschreibung: "", kosten: "" }],
     });
+  };
+
+  // Formularfelder ändern
+  const handleFeldChange = (index, field, value) => {
+    const updated = [...formFelder];
+    updated[index][field] = value;
+    setFormFelder(updated);
+  };
+
+  // Neues Feld hinzufügen
+  const addFormField = () => {
+    setFormFelder([...formFelder, { feldname: "", typ: "text", pflicht: false }]);
   };
 
   // Formular absenden
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token"); // JWT abrufen
-
       const payload = { ...formData };
-      // Entferne leere Preisfelder
-      payload.preise = payload.preise.filter(p => p.preisbeschreibung && p.kosten !== "");
+      // Leere Preise entfernen
+      payload.preise = payload.preise.filter(
+        (p) => p.preisbeschreibung && p.kosten !== ""
+      );
 
+      // Event speichern
       await axios.post(
         "https://jugehoerig-backend.onrender.com/api/event",
         payload,
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setMessage("🎉 Event erfolgreich erstellt!");
-      // Formular zurücksetzen
+      // Formularfelder anlegen
+      if (formFelder.length > 0 && eventId) {
+        await axios.post(
+          "https://jugehoerig-backend.onrender.com/api/events/form",
+          { eventId, felder: formFelder },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
+      setMessage("🎉 Event + Formular erfolgreich erstellt!");
+      // Reset
       setFormData({
         titel: "",
         beschreibung: "",
@@ -85,19 +120,25 @@ export default function CreateEventForm() {
         supporter: false,
         bild: "",
         bildtitel: "",
-        preise: [{ preisbeschreibung: "", kosten: "" }]
+        preise: [{ preisbeschreibung: "", kosten: "" }],
       });
+      setFormFelder([{ feldname: "E-Mail", typ: "email", pflicht: true }]);
       setPreview(null);
     } catch (err) {
-      console.error("Fehler beim Erstellen des Events:", err.response?.data || err.message);
-      setMessage("❌ Fehler beim Erstellen des Events.");
+      console.error(
+        "Fehler beim Erstellen:",
+        err.response?.data || err.message
+      );
+      setMessage("❌ Fehler beim Erstellen.");
     }
   };
 
   return (
     <div className="create-event-form">
       <h2>Neues Event erstellen</h2>
+      {eventId && <p className="event-id">Nächste Event-ID: {eventId}</p>}
       {message && <p className="form-message">{message}</p>}
+
       <form onSubmit={handleSubmit}>
         <label>Titel*</label>
         <input
@@ -193,9 +234,7 @@ export default function CreateEventForm() {
               type="number"
               placeholder="Kosten"
               value={preis.kosten}
-              onChange={(e) =>
-                handlePriceChange(idx, "kosten", e.target.value)
-              }
+              onChange={(e) => handlePriceChange(idx, "kosten", e.target.value)}
             />
           </div>
         ))}
@@ -203,8 +242,44 @@ export default function CreateEventForm() {
           + Weitere Preisoption
         </button>
 
+        <h3>Formularfelder</h3>
+        {formFelder.map((feld, idx) => (
+          <div key={idx} className="form-field">
+            <input
+              type="text"
+              placeholder="Feldname"
+              value={feld.feldname}
+              onChange={(e) =>
+                handleFeldChange(idx, "feldname", e.target.value)
+              }
+            />
+            <select
+              value={feld.typ}
+              onChange={(e) => handleFeldChange(idx, "typ", e.target.value)}
+            >
+              <option value="text">Text</option>
+              <option value="email">E-Mail</option>
+              <option value="number">Nummer</option>
+              <option value="date">Datum</option>
+            </select>
+            <label>
+              <input
+                type="checkbox"
+                checked={feld.pflicht}
+                onChange={(e) =>
+                  handleFeldChange(idx, "pflicht", e.target.checked)
+                }
+              />
+              Pflichtfeld
+            </label>
+          </div>
+        ))}
+        <button type="button" onClick={addFormField}>
+          + Feld hinzufügen
+        </button>
+
         <button type="submit" className="submit-btn">
-          Event erstellen
+          Event + Formular erstellen
         </button>
       </form>
     </div>
