@@ -1,190 +1,151 @@
+/* CreateEventForm.scss */
+
 .create-event-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  padding: 2.5rem;
-  background: #f8fafc;
-  border-radius: 24px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-  font-family: 'Inter', sans-serif;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  font-family: 'Arial', sans-serif;
+  color: #333;
 
   h2 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #1e293b;
-    text-align: center;
-  }
-
-  .event-id {
-    font-size: 1rem;
-    color: #64748b;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #1a202c;
     text-align: center;
   }
 
   .form-message {
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    background: #d1fae5;
-    color: #065f46;
     text-align: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #16a34a; /* grün für Erfolg */
+    &.error {
+      color: #dc2626; /* rot für Fehler */
+    }
   }
 
   form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 
     label {
-      font-size: 1rem;
       font-weight: 600;
-      color: #334155;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
+      display: block;
     }
 
-    input,
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    input[type="file"],
     textarea,
     select {
       width: 100%;
-      padding: 1rem 1.2rem;
+      padding: 0.6rem 0.8rem;
       border: 1px solid #cbd5e1;
-      border-radius: 16px;
+      border-radius: 8px;
       font-size: 1rem;
-      background: #ffffff;
-      color: #1e293b;
-      outline: none;
+      transition: 0.2s all;
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+        outline: none;
+      }
     }
 
     textarea {
-      grid-column: span 2;
-      min-height: 150px;
-    }
-
-    .full-width {
-      grid-column: span 2;
+      resize: vertical;
+      min-height: 80px;
     }
 
     .checkbox-group {
-      grid-column: span 2;
       display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-
+      gap: 1.5rem;
       label {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
-        font-size: 1rem;
-        color: #334155;
-      }
-
-      input[type="checkbox"] {
-        transform: scale(1.3);
-        accent-color: #0ea5e9;
+        gap: 0.5rem;
+        font-weight: 500;
       }
     }
 
-    .image-upload {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-
-      .image-preview {
-        width: 100%;
-        max-width: 280px;
-        border-radius: 16px;
-        border: 1px solid #cbd5e1;
-        object-fit: cover;
-      }
+    .image-preview {
+      width: 100%;
+      max-width: 250px;
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      object-fit: cover;
     }
 
     h3 {
-      grid-column: span 2;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #1e293b;
       margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+      color: #1f2937;
     }
 
     .price-field,
     .form-field {
       display: flex;
-      gap: 1rem;
-      align-items: center;
       flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
 
-      input,
-      select {
-        flex: 1;
-        padding: 0.85rem 1rem;
-        border-radius: 12px;
+      input, select {
+        flex: 1 1 200px;
       }
 
       label {
-        font-size: 0.95rem;
-        color: #334155;
+        flex: 1 1 auto;
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.3rem;
       }
     }
 
-    .add-price,
-    button[type="button"] {
-      padding: 0.8rem 1.5rem;
-      border: 2px solid #3b82f6;
-      border-radius: 16px;
+    button {
+      padding: 0.6rem 1rem;
       font-size: 1rem;
-      font-weight: 600;
-      background: #e0f2fe;
-      color: #1e40af;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      grid-column: span 2;
+      transition: 0.2s all;
+      background: #3b82f6;
+      color: #fff;
+      font-weight: 600;
+      &:hover {
+        background: #2563eb;
+      }
+      &.add-price, &.add-form {
+        background: #10b981;
+        &:hover {
+          background: #059669;
+        }
+      }
     }
 
     .submit-btn {
-      grid-column: span 2;
-      padding: 1.2rem 1.8rem;
-      border: none;
-      border-radius: 20px;
-      font-size: 1.2rem;
-      font-weight: 700;
+      margin-top: 1rem;
+      width: 100%;
       background: #3b82f6;
-      color: #ffffff;
-      cursor: pointer;
-      text-align: center;
-    }
-  }
-
-  // ================= Responsive =================
-  @media (max-width: 900px) {
-    form {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-
-      .image-upload .image-preview {
-        max-width: 100%;
-      }
-
-      .add-price,
-      .submit-btn {
-        grid-column: span 1;
+      &:hover {
+        background: #2563eb;
       }
     }
   }
 
-  @media (max-width: 500px) {
-    padding: 1.5rem;
-    h2 {
-      font-size: 1.8rem;
-    }
+  @media (max-width: 768px) {
+    padding: 1rem;
 
     .price-field,
     .form-field {
       flex-direction: column;
-      gap: 1rem;
+      align-items: stretch;
     }
   }
 }

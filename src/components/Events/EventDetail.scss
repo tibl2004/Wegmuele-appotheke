@@ -1,153 +1,178 @@
-// EventDetail.scss
-
-$primary-color: #2a4365;      // dunkles Blau
-$secondary-color: #4a5568;    // Grau-Blau
-$background-color: #f7fafc;   // helles Grau
-$text-color: #1a202c;         // fast Schwarz
-$border-color: #cbd5e0;       // helles Grau für Grenzen
-$error-color: #e53e3e;        // Rot für Fehler
-$button-bg: #3182ce;          // Blau für Buttons
-$button-bg-disabled: #a0aec0; // helleres Grau für disabled Buttons
-$font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* EventDetail.scss */
 
 .event-detail {
-  max-width: 700px;
+  max-width: 900px;
   margin: 2rem auto;
-  padding: 2rem;
-  background: $background-color;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  font-family: $font-family;
-  color: $text-color;
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 
   .back-link {
     display: inline-block;
     margin-bottom: 1.5rem;
-    color: $primary-color;
-    font-weight: 600;
+    color: #555;
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    &:hover {
+      color: #0077ff;
+    }
   }
 
   .event-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     margin-bottom: 2rem;
 
     h1 {
-      font-size: 2.25rem;
+      font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: $primary-color;
-    }
-
-    input[type="text"],
-    input[type="file"] {
-      display: block;
-      width: 100%;
-      font-size: 1rem;
-      padding: 0.5rem 0.75rem;
-      margin-top: 0.5rem;
-      border: 1px solid $border-color;
-      border-radius: 4px;
-      background-color: white;
-      color: $text-color;
-      box-sizing: border-box;
+      flex: 1;
+      line-height: 1.2;
     }
 
     img {
-      margin-top: 1rem;
-      max-width: 100%;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      display: block;
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ddd;
     }
   }
 
   .event-info {
+    margin-bottom: 2rem;
     p {
-      font-size: 1rem;
-      line-height: 1.5;
       margin: 0.4rem 0;
-      
+      font-size: 1rem;
       strong {
-        color: $secondary-color;
-        width: 110px;
-        display: inline-block;
+        color: #222;
       }
     }
 
-    img {
-      max-width: 100%;
+    .event-preise {
+      margin-top: 1rem;
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      ul {
+        padding-left: 1.5rem;
+        li {
+          margin-bottom: 0.3rem;
+          font-size: 0.95rem;
+        }
+      }
+    }
+  }
+
+  .event-formular {
+    margin-bottom: 2rem;
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
       margin-bottom: 1rem;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      color: #0077ff;
     }
 
-    label {
-      display: block;
-      margin-bottom: 1rem;
-      font-weight: 600;
-      color: $secondary-color;
-      font-size: 0.95rem;
+    .success {
+      color: green;
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
 
-      input[type="text"],
-      input[type="datetime-local"],
-      textarea {
-        width: 100%;
-        margin-top: 0.25rem;
-        padding: 0.5rem 0.75rem;
+    .error {
+      color: red;
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .formular-field {
+        display: flex;
+        flex-direction: column;
+        label {
+          font-weight: 500;
+          margin-bottom: 0.4rem;
+        }
+        input,
+        select {
+          padding: 0.5rem 0.8rem;
+          font-size: 1rem;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          &:focus {
+            border-color: #0077ff;
+            box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.2);
+          }
+        }
+      }
+
+      button[type='submit'] {
+        align-self: flex-start;
+        padding: 0.7rem 1.5rem;
         font-size: 1rem;
-        border: 1px solid $border-color;
-        border-radius: 4px;
-        resize: vertical;
-        box-sizing: border-box;
-        font-family: $font-family;
-      }
-
-      input[type="checkbox"] {
-        margin-left: 0.5rem;
-        transform: scale(1.1);
-        vertical-align: middle;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(90deg, #0077ff, #005fcc);
+        border: none;
+        border-radius: 8px;
         cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        &:hover {
+          background: linear-gradient(90deg, #005fcc, #003f99);
+          transform: translateY(-2px);
+        }
       }
     }
   }
 
   .event-actions {
-    margin-top: 2rem;
     display: flex;
     gap: 1rem;
+    margin-top: 1.5rem;
 
     button {
-      background-color: $button-bg;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.4rem;
+      padding: 0.6rem 1.2rem;
       font-size: 1rem;
       font-weight: 600;
-      border-radius: 6px;
+      border-radius: 8px;
+      border: none;
       cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease;
-      min-width: 110px;
-      
-      &:disabled {
-        background-color: $button-bg-disabled;
-        cursor: not-allowed;
+      transition: background 0.2s, transform 0.1s;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &:first-child {
+        background-color: #0077ff;
+        color: #fff;
+      }
+
+      &:last-child {
+        background-color: #e74c3c;
+        color: #fff;
       }
     }
-
-    .error {
-      color: $error-color;
-      font-weight: 600;
-      margin-top: 0.5rem;
-      flex-basis: 100%;
-    }
   }
 
-  .loading, .error {
-    font-size: 1.2rem;
+  .loading,
+  .error {
     text-align: center;
-    margin: 3rem 0;
-    color: $secondary-color;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 2rem 0;
   }
-
 }

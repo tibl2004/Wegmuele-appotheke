@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./EventDetail.scss";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -12,24 +13,17 @@ export default function EventDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Startet im Edit-Mode, wenn aus EventList mit { state: { edit: true } } aufgerufen
   const [editMode, setEditMode] = useState(location.state?.edit === true);
 
-  const [formData, setFormData] = useState({
-    titel: "",
-    beschreibung: "",
-    ort: "",
-    von: "",
-    bis: "",
-    alle: false,
-    supporter: false,
-    bild: null,
-  });
+  const [formData, setFormData] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [registerError, setRegisterError] = useState(null);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  const [userTypes, setUserTypes] = useState(null);
+  const [isAdminOrVorstand, setIsAdminOrVorstand] = useState(false);
 
+  // --- Event und UserType laden ---
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -37,58 +31,70 @@ export default function EventDetail() {
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        if (parsedUser.userTypes) {
-          setUserTypes(parsedUser.userTypes.toLowerCase());
-        }
+        const roles = parsedUser.userTypes || "";
+        setIsAdminOrVorstand(
+          roles.toLowerCase() === "admin" || roles.toLowerCase() === "vorstand"
+        );
       } catch {
-        console.error("Fehler beim Parsen der Benutzerdaten");
+        setIsAdminOrVorstand(false);
       }
     }
 
-    axios
-      .get(`https://jugehoerig-backend.onrender.com/api/event/${id}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      })
-      .then((res) => {
-        setEvent(res.data);
+    const loadEvent = async () => {
+      try {
+        const res = await axios.get(
+          `https://jugehoerig-backend.onrender.com/api/event/${id}`,
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        );
+        const ev = res.data;
+        setEvent(ev);
+
+        const initialData = {};
+        (ev.formular || []).forEach(f => (initialData[f.feldname] = ""));
+
         setFormData({
-          titel: res.data.titel || "",
-          beschreibung: res.data.beschreibung || "",
-          ort: res.data.ort || "",
-          von: res.data.von
-            ? new Date(res.data.von).toISOString().slice(0, 16)
-            : "",
-          bis: res.data.bis
-            ? new Date(res.data.bis).toISOString().slice(0, 16)
-            : "",
-          alle: res.data.alle === 1 || res.data.alle === true,
-          supporter: res.data.supporter === 1 || res.data.supporter === true,
+          titel: ev.titel || "",
+          beschreibung: ev.beschreibung || "",
+          ort: ev.ort || "",
+          von: ev.von ? new Date(ev.von).toISOString().slice(0,16) : "",
+          bis: ev.bis ? new Date(ev.bis).toISOString().slice(0,16) : "",
+          alle: !!ev.alle,
+          supporter: !!ev.supporter,
           bild: null,
+          bildtitel: ev.bildtitel || "",
+          preise: ev.preise || [],
+          felder: ev.formular || []
         });
+
         setLoading(false);
-      })
-      .catch(() => {
+      } catch (err) {
+        console.error(err);
         setError("Event konnte nicht geladen werden");
         setLoading(false);
-      });
+      }
+    };
+
+    loadEvent();
   }, [id]);
 
+  // --- Allgemeines Input-Handling ---
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
+  // --- Bildhandling ---
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "image/png") {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prev) => ({
+        setFormData(prev => ({
           ...prev,
-          bild: reader.result,
+          bild: reader.result
         }));
       };
       reader.readAsDataURL(file);
@@ -98,53 +104,61 @@ export default function EventDetail() {
     }
   };
 
+  // --- Preise ---
+  const handlePreisChange = (index, field, value) => {
+    setFormData(prev => {
+      const preise = [...(prev.preise || [])];
+      preise[index][field] = field === "kosten" ? Number(value) : value;
+      return { ...prev, preise };
+    });
+  };
+  const addPreis = () => setFormData(prev => ({ ...prev, preise: [...(prev.preise || []), { preisbeschreibung: "", kosten: 0 }] }));
+  const removePreis = (index) => setFormData(prev => ({ ...prev, preise: prev.preise.filter((_, i) => i !== index) }));
+
+  // --- Formularfelder ---
+  const handleFeldChange = (index, field, value) => {
+    setFormData(prev => {
+      const felder = [...(prev.felder || [])];
+      felder[index][field] = value;
+      return { ...prev, felder };
+    });
+  };
+  const addFeld = () => setFormData(prev => ({ ...prev, felder: [...(prev.felder || []), { feldname: "", typ: "text", pflicht: false, optionen: [] }] }));
+  const removeFeld = (index) => setFormData(prev => ({ ...prev, felder: prev.felder.filter((_, i) => i !== index) }));
+
+  // --- Bearbeitungsmodus ---
   const handleEditToggle = () => {
-    setEditMode((prev) => !prev);
-    setSaveError(null);
     if (editMode && event) {
       setFormData({
         titel: event.titel || "",
         beschreibung: event.beschreibung || "",
         ort: event.ort || "",
-        von: event.von ? new Date(event.von).toISOString().slice(0, 16) : "",
-        bis: event.bis ? new Date(event.bis).toISOString().slice(0, 16) : "",
-        alle: event.alle === 1 || event.alle === true,
-        supporter: event.supporter === 1 || event.supporter === true,
+        von: event.von ? new Date(event.von).toISOString().slice(0,16) : "",
+        bis: event.bis ? new Date(event.bis).toISOString().slice(0,16) : "",
+        alle: !!event.alle,
+        supporter: !!event.supporter,
         bild: null,
+        bildtitel: event.bildtitel || "",
+        preise: event.preise || [],
+        felder: event.formular || []
       });
     }
+    setEditMode(prev => !prev);
+    setSaveError(null);
   };
 
+  // --- Event speichern ---
   const handleSave = async () => {
     setSaving(true);
     setSaveError(null);
     try {
-      const payload = {
-        titel: formData.titel,
-        beschreibung: formData.beschreibung,
-        ort: formData.ort,
-        von: formData.von,
-        bis: formData.bis,
-        alle: formData.alle,
-        supporter: formData.supporter,
-      };
-      if (formData.bild) {
-        payload.bild = formData.bild;
-      }
-
+      const payload = { ...formData };
       await axios.put(
         `https://jugehoerig-backend.onrender.com/api/event/${id}`,
         payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-
-      const res = await axios.get(
-        `https://jugehoerig-backend.onrender.com/api/event/${id}`
-      );
+      const res = await axios.get(`https://jugehoerig-backend.onrender.com/api/event/${id}`);
       setEvent(res.data);
       setEditMode(false);
     } catch {
@@ -154,20 +168,39 @@ export default function EventDetail() {
     }
   };
 
+  // --- Event löschen ---
   const handleDelete = async () => {
     if (!window.confirm("Möchten Sie dieses Event wirklich löschen?")) return;
     try {
       await axios.delete(
         `https://jugehoerig-backend.onrender.com/api/event/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       navigate("/events");
     } catch {
       alert("Fehler beim Löschen des Events.");
+    }
+  };
+
+  // --- Anmeldung ---
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setRegisterError(null);
+    setRegisterSuccess(false);
+    try {
+      await axios.post(
+        `https://jugehoerig-backend.onrender.com/api/event/${id}/register`,
+        { daten: formData },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      setRegisterSuccess(true);
+      setFormData(prev => {
+        const resetData = { ...prev };
+        (event.formular || []).forEach(f => resetData[f.feldname] = "");
+        return resetData;
+      });
+    } catch (err) {
+      setRegisterError(err.response?.data?.error || "Fehler bei der Anmeldung.");
     }
   };
 
@@ -177,153 +210,119 @@ export default function EventDetail() {
 
   return (
     <div className="event-detail">
-      <Link to="/events" className="back-link">
-        &larr; Zurück zur Übersicht
-      </Link>
+      <Link to="/events" className="back-link">&larr; Zurück zur Übersicht</Link>
 
       <div className="event-header">
-        {!editMode ? (
-          <h1>{event.titel}</h1>
+        {editMode ? (
+          <>
+            <input name="titel" value={formData.titel} onChange={handleInputChange} placeholder="Titel" />
+            <input type="file" accept="image/png" onChange={handleImageChange} />
+          </>
         ) : (
           <>
-            <input
-              type="text"
-              name="titel"
-              value={formData.titel}
-              onChange={handleInputChange}
-              placeholder="Titel"
-              required
-            />
-            <input type="file" accept="image/png" onChange={handleImageChange} />
-            {(formData.bild || event.bild) && (
-              <img
-                src={
-                  formData.bild
-                    ? formData.bild
-                    : `data:image/png;base64,${event.bild}`
-                }
-                alt="Event Vorschau"
-                style={{ maxWidth: "400px", marginTop: "10px" }}
-              />
-            )}
+            <h1>{event.titel}</h1>
+            {event.bild && <img src={event.bild} alt={event.bildtitel} />}
           </>
         )}
       </div>
 
       <div className="event-info">
-        {!editMode ? (
+        {editMode ? (
           <>
-            <img src={event.bild} alt={event.bildtitel} />
-            <p>
-              <strong>Beschreibung:</strong> {event.beschreibung}
-            </p>
-            <p>
-              <strong>Ort:</strong> {event.ort}
-            </p>
-            <p>
-              <strong>Von:</strong> {new Date(event.von).toLocaleString()}
-            </p>
-            <p>
-              <strong>Bis:</strong> {new Date(event.bis).toLocaleString()}
-            </p>
-            <p>
-              <strong>Für Alle:</strong> {event.alle ? "Ja" : "Nein"}
-            </p>
-            <p>
-              <strong>Supporter Event:</strong> {event.supporter ? "Ja" : "Nein"}
-            </p>
+            {/* Bearbeiten Inputs */}
+            <textarea name="beschreibung" value={formData.beschreibung} onChange={handleInputChange} placeholder="Beschreibung" />
+            <input name="ort" value={formData.ort} onChange={handleInputChange} placeholder="Ort" />
+            <input type="datetime-local" name="von" value={formData.von} onChange={handleInputChange} />
+            <input type="datetime-local" name="bis" value={formData.bis} onChange={handleInputChange} />
+            <label><input type="checkbox" name="alle" checked={formData.alle} onChange={handleInputChange} /> Für Alle</label>
+            <label><input type="checkbox" name="supporter" checked={formData.supporter} onChange={handleInputChange} /> Supporter Event</label>
+
+            {/* Preise */}
+            <div className="preise-edit">
+              <h3>Preisoptionen</h3>
+              {(formData.preise || []).map((p,i) => (
+                <div key={i} className="preis-field">
+                  <input value={p.preisbeschreibung} onChange={e => handlePreisChange(i,"preisbeschreibung",e.target.value)} placeholder="Beschreibung" />
+                  <input type="number" value={p.kosten} onChange={e => handlePreisChange(i,"kosten",e.target.value)} placeholder="Kosten" />
+                  <button type="button" onClick={() => removePreis(i)}>Entfernen</button>
+                </div>
+              ))}
+              <button type="button" onClick={addPreis}>Preis hinzufügen</button>
+            </div>
+
+            {/* Formularfelder */}
+            <div className="felder-edit">
+              <h3>Formularfelder</h3>
+              {(formData.felder || []).map((f,i) => (
+                <div key={i} className="feld-field">
+                  <input value={f.feldname} onChange={e=>handleFeldChange(i,"feldname",e.target.value)} placeholder="Feldname" />
+                  <select value={f.typ} onChange={e=>handleFeldChange(i,"typ",e.target.value)}>
+                    <option value="text">Text</option>
+                    <option value="email">Email</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                    <option value="select">Select</option>
+                  </select>
+                  <label>
+                    Pflicht <input type="checkbox" checked={f.pflicht} onChange={e=>handleFeldChange(i,"pflicht",e.target.checked)} />
+                  </label>
+                  <button type="button" onClick={()=>removeFeld(i)}>Entfernen</button>
+                </div>
+              ))}
+              <button type="button" onClick={addFeld}>Feld hinzufügen</button>
+            </div>
+
+            <div className="edit-actions">
+              <button onClick={handleSave} disabled={saving}>{saving ? "Speichern..." : "Speichern"}</button>
+              <button onClick={handleEditToggle}>Abbrechen</button>
+              {saveError && <p className="error">{saveError}</p>}
+            </div>
           </>
         ) : (
           <>
-            <label>
-              Beschreibung:
-              <textarea
-                name="beschreibung"
-                value={formData.beschreibung}
-                onChange={handleInputChange}
-                rows={4}
-                required
-              />
-            </label>
-            <label>
-              Ort:
-              <input
-                type="text"
-                name="ort"
-                value={formData.ort}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
-            <label>
-              Von:
-              <input
-                type="datetime-local"
-                name="von"
-                value={formData.von}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
-            <label>
-              Bis:
-              <input
-                type="datetime-local"
-                name="bis"
-                value={formData.bis}
-                onChange={handleInputChange}
-                required
-              />
-            </label>
-            <label>
-              Für Alle:
-              <input
-                type="checkbox"
-                name="alle"
-                checked={formData.alle}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Supporter Event:
-              <input
-                type="checkbox"
-                name="supporter"
-                checked={formData.supporter}
-                onChange={handleInputChange}
-              />
-            </label>
+            <p><strong>Beschreibung:</strong> {event.beschreibung}</p>
+            <p><strong>Ort:</strong> {event.ort}</p>
+            <p><strong>Von:</strong> {new Date(event.von).toLocaleString()}</p>
+            <p><strong>Bis:</strong> {new Date(event.bis).toLocaleString()}</p>
+            <p><strong>Für Alle:</strong> {event.alle ? "Ja" : "Nein"}</p>
+            <p><strong>Supporter Event:</strong> {event.supporter ? "Ja" : "Nein"}</p>
           </>
         )}
       </div>
 
-      <div className="event-actions">
-        {editMode ? (
-          <>
-            <button onClick={handleSave} disabled={saving}>
-              {saving ? "Speichert..." : "Speichern"}
-            </button>
-            <button onClick={handleEditToggle} disabled={saving}>
-              Abbrechen
-            </button>
-            {saveError && <p className="error">{saveError}</p>}
-          </>
-        ) : (
-          <>
-            {(userTypes === "admin" || userTypes === "vorstand") && (
-              <button onClick={handleEditToggle}>Bearbeiten</button>
-            )}
-            {userTypes === "admin" && (
-              <button
-                onClick={handleDelete}
-                style={{ backgroundColor: "red", color: "#fff" }}
-              >
-                Löschen
-              </button>
-            )}
-          </>
-        )}
-      </div>
+      {!editMode && (event.formular || []).length > 0 && (
+        <div className="event-formular">
+          <h2>Anmeldeformular</h2>
+          {registerSuccess && <p className="success">Anmeldung erfolgreich!</p>}
+          {registerError && <p className="error">{registerError}</p>}
+          <form onSubmit={handleRegister}>
+            {(event.formular || []).map(f => (
+              <div key={f.id} className="formular-field">
+                <label>{f.feldname} {f.pflicht && "*"}</label>
+                {f.typ === "text" && <input name={f.feldname} value={formData[f.feldname] || ""} onChange={handleInputChange} required={f.pflicht} />}
+                {f.typ === "email" && <input type="email" name={f.feldname} value={formData[f.feldname] || ""} onChange={handleInputChange} required={f.pflicht} />}
+                {f.typ === "number" && <input type="number" name={f.feldname} value={formData[f.feldname] || ""} onChange={handleInputChange} required={f.pflicht} />}
+                {f.typ === "date" && <input type="date" name={f.feldname} value={formData[f.feldname] || ""} onChange={handleInputChange} required={f.pflicht} />}
+                {f.typ === "select" && f.optionen && (
+                  <select name={f.feldname} value={formData[f.feldname] || ""} onChange={handleInputChange} required={f.pflicht}>
+                    <option value="">Bitte auswählen</option>
+                    {(f.optionen || []).map((opt, idx) => <option key={idx} value={opt}>{opt}</option>)}
+                  </select>
+                )}
+              </div>
+            ))}
+            <button type="submit">Anmelden</button>
+          </form>
+        </div>
+      )}
+
+      {isAdminOrVorstand && !editMode && (
+        <div className="event-actions">
+          <button className="edit-button" onClick={handleEditToggle}><FiEdit /> Bearbeiten</button>
+          <button className="delete-button" onClick={handleDelete}><FiTrash2 /> Löschen</button>
+        </div>
+      )}
+
     </div>
   );
 }
