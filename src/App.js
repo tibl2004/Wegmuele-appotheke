@@ -49,7 +49,7 @@ const App = () => {
           <Route path="/vorstand-erstellen" element={<VorstandForm />} />
           <Route path="/vorstand" element={<Vorstand />} />
           <Route path="/subscribe-form" element={<SubscribeForm />} />
-          <Route path="/newsletter-form" element={<NewsletterCreateForm />} />
+          <Route path="/newsletter-form" element={<NewsletterForm />} />
           <Route path="/newsletter-import" element={<ImportSubscribersTable />} />
           <Route path="/newsletter-subscribers" element={<NewsletterSubscribersList />} />
           <Route path="/impressum" element={<Impressum />} />

@@ -7,18 +7,15 @@ const Footer = () => {
   const [impressum, setImpressum] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [form, setForm] = useState({ name: "", email: "", nachricht: "" });
   const [formStatus, setFormStatus] = useState("");
 
-  // Impressum laden
+  // Impressum + Logo laden
   useEffect(() => {
     const fetchImpressum = async () => {
       try {
-        const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://jugehoerig-backend.onrender.com/api/impressum",
-          { headers: { Authorization: `Bearer ${token}` } }
+          "https://jugehoerig-backend.onrender.com/api/impressum"
         );
         setImpressum(res.data);
       } catch (err) {
@@ -30,16 +27,6 @@ const Footer = () => {
     };
     fetchImpressum();
   }, []);
-
-  if (loading) return <div className="impressum-loading">Lade Impressum...</div>;
-  if (error) return <div className="impressum-error">{error}</div>;
-  if (!impressum) return null;
-
-  const getIcon = (iconName) => {
-    if (!iconName) return <FaIcons.FaLink />;
-    const IconComponent = FaIcons[`Fa${iconName}`];
-    return IconComponent ? <IconComponent /> : <FaIcons.FaLink />;
-  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -61,7 +48,7 @@ const Footer = () => {
 
       if (response.status === 201) {
         setFormStatus(
-          "Vielen Dank! Ihre Anfrage wurde erfolgreich versendet. Bitte antworten Sie nicht auf diese E-Mail. Für Anliegen schreiben Sie bitte an info@jugehoerig.ch."
+          "Vielen Dank! Ihre Anfrage wurde erfolgreich versendet. Sie erhalten eine Bestätigungsmail."
         );
         setForm({ name: "", email: "", nachricht: "" });
       } else {
@@ -77,38 +64,52 @@ const Footer = () => {
     }
   };
 
+  const getIcon = (iconName) => {
+    if (!iconName) return <FaIcons.FaLink />;
+    const IconComponent = FaIcons[`Fa${iconName}`];
+    return IconComponent ? <IconComponent /> : <FaIcons.FaLink />;
+  };
+
+  if (loading) return <div className="impressum-loading">Lade Inhalte...</div>;
+  if (error) return <div className="impressum-error">{error}</div>;
+
   return (
     <div className="footer-container">
       {/* Impressum links */}
       <div className="impressum-container">
-        {impressum.logo && (
+        {impressum?.logo && (
           <div className="impressum-logo">
-            <img src={`data:image/png;base64,${impressum.logo}`} alt="Logo" />
+            <img
+              src={`data:image/png;base64,${impressum.logo}`}
+              alt="Logo"
+            />
           </div>
         )}
 
-        <p>{impressum.text}</p>
+        <p>{impressum?.text}</p>
 
-        <div className="impressum-adresse">
-          <strong>Adresse:</strong>{" "}
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-              impressum.adresse
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {impressum.adresse}
-          </a>
-        </div>
+        {impressum?.adresse && (
+          <div className="impressum-adresse">
+            <strong>Adresse:</strong>{" "}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                impressum.adresse
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {impressum.adresse}
+            </a>
+          </div>
+        )}
 
-        {impressum.links && impressum.links.length > 0 && (
+        {impressum?.links?.length > 0 && (
           <div className="impressum-links">
             <h3>Weitere Links:</h3>
             <ul>
               {impressum.links.map((link) => (
                 <li key={link.id}>
-                  <span className="impressum-link-icon">{getIcon(link.icon)}</span>{" "}
+                  <span className="impressum-link-icon">{getIcon(link.icon)}</span>
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
                     {link.title}
                   </a>

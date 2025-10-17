@@ -8,7 +8,6 @@ const VorstandPDF = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔹 Alle Vorstände abrufen
   const fetchVorstand = async () => {
     try {
       const res = await axios.get(
@@ -24,40 +23,37 @@ const VorstandPDF = () => {
     }
   };
 
-  useEffect(() => {
-    fetchVorstand();
-  }, []);
+  useEffect(() => { fetchVorstand(); }, []);
 
-  // 🔹 PDF für ein Mitglied erstellen
   const generateVorstandPDF = (user) => {
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    // Logo optional oben links
+    // doc.addImage(logoData, 'PNG', 20, 10, 40, 20);
 
     // Kopfzeile
-    doc.setFillColor(41, 128, 185);
-    doc.rect(0, 0, pageWidth, 25, "F");
     doc.setFontSize(16);
-    doc.setTextColor(255);
     doc.setFont("helvetica", "bold");
-    doc.text("Zugangsdaten für das Vorstandssystem", pageWidth / 2, 16, { align: "center" });
+    doc.text("Vorstands-Zugangsdaten", pageWidth / 2, y, { align: "center" });
+    y += 15;
 
-    // Begrüßung
-    doc.setFontSize(12);
-    doc.setTextColor(0);
+    // Anschrift
     doc.setFont("helvetica", "normal");
-    doc.text(`Sehr geehrte/r ${user.vorname} ${user.nachname},`, 20, 40);
+    doc.setFontSize(12);
+    doc.text(`${user.vorname} ${user.nachname}`, 20, y); y += 7;
+    doc.text("Musterstraße 1", 20, y); y += 7; // Optional: echte Adresse, wenn vorhanden
+    doc.text("8000 Zürich", 20, y); y += 15;
 
-    let y = 50;
+    // Begrüßung und Einleitung
+    doc.text(`Sehr geehrte/r ${user.vorname} ${user.nachname},`, 20, y); y += 10;
     const intro = [
       "wir freuen uns, Ihnen Ihre persönlichen Zugangsdaten für das interne Vorstandssystem mitzuteilen.",
       "Bitte bewahren Sie diesen Brief vertraulich auf und vernichten Sie ihn nach dem ersten Login."
     ];
-    intro.forEach(line => {
-      doc.text(line, 20, y);
-      y += 7;
-    });
-
-    y += 5;
+    intro.forEach(line => { doc.text(line, 20, y); y += 7; });
+    y += 10;
 
     // Zugangsdaten
     doc.setFont("helvetica", "bold");
@@ -72,12 +68,10 @@ const VorstandPDF = () => {
       "Nach dem ersten Login werden Sie aufgefordert, Ihr Passwort zu ändern.",
       "Danach können Sie Ihr Passwort jederzeit selbstständig verwalten."
     ];
-    info.forEach(line => {
-      doc.text(line, 20, y);
-      y += 7;
-    });
+    info.forEach(line => { doc.text(line, 20, y); y += 7; });
+    y += 15;
 
-    y += 10;
+    // Grußformel
     doc.text("Mit freundlichen Grüßen,", 20, y); y += 7;
     doc.text("Ihr Vorstandsteam", 20, y); y += 7;
 
@@ -95,14 +89,10 @@ const VorstandPDF = () => {
       { align: "center" }
     );
 
-    // PDF speichern
     doc.save(`Vorstands_Zugang_${user.vorname}_${user.nachname}.pdf`);
   };
 
-  // 🔹 Für alle Vorstände einzelne PDFs generieren
-  const downloadAllPDFs = () => {
-    vorstand.forEach(user => generateVorstandPDF(user));
-  };
+  const downloadAllPDFs = () => vorstand.forEach(user => generateVorstandPDF(user));
 
   if (loading) return <p>Lade Vorstands-Logins…</p>;
   if (error) return <p className="error">{error}</p>;
@@ -110,16 +100,14 @@ const VorstandPDF = () => {
   return (
     <div className="vorstand-pdf-container">
       <h2>Vorstands-Zugangsdaten</h2>
-      <p>Hier können Sie für jedes Vorstandsmitglied ein PDF mit den Zugangsdaten erstellen.</p>
-      <button className="download-btn" onClick={downloadAllPDFs}>
-        Zugangsdaten-PDFs herunterladen
-      </button>
+      <p>Erstellen Sie für jedes Vorstandsmitglied ein PDF mit Zugangsdaten im Briefstil.</p>
+      <button className="download-btn" onClick={downloadAllPDFs}>Alle PDFs herunterladen</button>
 
       <div className="vorstand-list">
         {vorstand.map(user => (
           <div key={user.benutzername} className="vorstand-item">
             <p><strong>{user.vorname} {user.nachname}</strong> ({user.benutzername})</p>
-            <button onClick={() => generateVorstandPDF(user)}>PDF für dieses Mitglied</button>
+            <button onClick={() => generateVorstandPDF(user)}>PDF erstellen</button>
           </div>
         ))}
       </div>

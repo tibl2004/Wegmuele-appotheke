@@ -71,7 +71,7 @@ function UeberUns() {
       const token = localStorage.getItem("token");
       await axios.put(
         "https://jugehoerig-backend.onrender.com/api/youtubelink",
-        { youtubelink: editLink },
+        { newLink: editLink }, // ⚡ korrekt: backend erwartet newLink
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEditing(false);
@@ -84,6 +84,7 @@ function UeberUns() {
       console.error(error);
     }
   };
+  
 
   const toggleExpand = (index) => {
     setExpandedStates((prev) => ({ ...prev, [index]: !prev[index] }));

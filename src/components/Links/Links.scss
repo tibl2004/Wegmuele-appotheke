@@ -1,36 +1,36 @@
-// 🎨 Links.scss — modernes professionelles Design
+// 🔧 Links.scss – visuell klar & professionell
 
-$primary-color: #2a73ff;
-$secondary-color: #6c63ff;
-$bg-light: #f8f9fc;
-$bg-white: #ffffff;
-$text-dark: #222;
-$text-light: #555;
-$danger-color: #ff4d4d;
-$success-color: #00c896;
-$border-radius: 14px;
+$primary: #2563eb; // Hauptblau
+$secondary: #60a5fa; // helleres Blau
+$success: #16a34a;
+$danger: #dc2626;
+$bg: #f3f6fb;
+$white: #ffffff;
+$text: #1e293b;
+$muted: #64748b;
+$radius: 12px;
 $transition: all 0.25s ease;
 
 .links-management {
-  padding: 2rem 4%;
-  background: linear-gradient(135deg, #eef3ff 0%, #f7f8ff 100%);
+  background: $bg;
   min-height: 100vh;
+  padding: 2rem 4%;
 
   h2 {
     text-align: center;
-    color: $text-dark;
-    font-size: 2.2rem;
+    font-size: 2rem;
+    color: $text;
     font-weight: 700;
-    margin-bottom: 2rem;
+    margin-bottom: 1.8rem;
     position: relative;
 
     &::after {
       content: "";
       display: block;
-      width: 80px;
       height: 4px;
-      margin: 0.8rem auto 0;
-      background: linear-gradient(90deg, $primary-color, $secondary-color);
+      width: 100px;
+      margin: 0.7rem auto 0;
+      background: linear-gradient(90deg, $primary, $secondary);
       border-radius: 2px;
     }
   }
@@ -38,83 +38,95 @@ $transition: all 0.25s ease;
   .plus-button {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: linear-gradient(90deg, $primary-color, $secondary-color);
-    color: white;
+    gap: 0.5rem;
+    background: linear-gradient(90deg, $primary, $secondary);
     border: none;
-    padding: 0.7rem 1.4rem;
+    color: white;
+    font-weight: 600;
+    padding: 0.7rem 1.2rem;
     border-radius: 50px;
     cursor: pointer;
-    margin: 0 auto 2rem;
-    font-weight: 600;
-    font-size: 1rem;
     transition: $transition;
-    box-shadow: 0 4px 12px rgba(100, 100, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    margin: 0 auto 2rem;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(100, 100, 255, 0.3);
-    }
-
-    svg {
-      margin-right: 0.4rem;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
     }
   }
 
+  // 🔹 Sektion-Card
   .section-block {
-    background: $bg-white;
-    border-radius: $border-radius;
-    padding: 1.5rem 2rem;
+    background: $white;
+    border-radius: $radius;
+    padding: 1.6rem 2rem;
     margin-bottom: 1.8rem;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
     transition: $transition;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     }
 
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.8rem;
+      flex-wrap: wrap;
       margin-bottom: 1rem;
 
       h3 {
         font-size: 1.4rem;
-        color: $text-dark;
         font-weight: 600;
+        color: $primary;
       }
 
       input {
-        font-size: 1.1rem;
-        padding: 0.5rem 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        outline: none;
         flex: 1;
+        margin-right: 1rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
         &:focus {
-          border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba(42, 115, 255, 0.1);
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
       }
 
-      button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: $text-light;
-        font-size: 1.2rem;
-        transition: $transition;
+      .actions {
+        display: flex;
+        gap: 0.5rem;
 
-        &:hover {
-          color: $primary-color;
-          transform: scale(1.2);
+        button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1.2rem;
+          color: $muted;
+          padding: 0.4rem;
+          border-radius: 6px;
+          transition: $transition;
+
+          &:hover {
+            color: $primary;
+            background: rgba(37, 99, 235, 0.1);
+          }
+
+          &.delete:hover {
+            color: $danger;
+            background: rgba(220, 38, 38, 0.1);
+          }
+
+          &.add:hover {
+            color: $success;
+            background: rgba(22, 163, 74, 0.1);
+          }
         }
       }
     }
 
+    // 🔹 Neues Link-Eingabefeld
     .add-link {
       display: flex;
       gap: 0.6rem;
@@ -122,14 +134,14 @@ $transition: all 0.25s ease;
 
       input {
         flex: 1;
-        padding: 0.6rem 0.9rem;
+        padding: 0.6rem 0.8rem;
+        border: 1px solid #ccc;
         border-radius: 8px;
-        border: 1px solid #ddd;
         transition: $transition;
 
         &:focus {
-          border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba(42, 115, 255, 0.1);
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
       }
 
@@ -137,23 +149,24 @@ $transition: all 0.25s ease;
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         transition: $transition;
 
         &:first-of-type {
-          color: $success-color;
+          color: $success;
         }
 
         &:last-of-type {
-          color: $danger-color;
+          color: $danger;
         }
 
         &:hover {
-          transform: scale(1.2);
+          transform: scale(1.15);
         }
       }
     }
 
+    // 🔹 Linkliste
     ul {
       list-style: none;
       padding: 0;
@@ -163,63 +176,79 @@ $transition: all 0.25s ease;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: #f9f9fb;
-        padding: 0.7rem 1rem;
+        background: #f9fafc;
         border-radius: 10px;
+        padding: 0.7rem 1rem;
         margin-bottom: 0.6rem;
         transition: $transition;
+        border: 1px solid #edf1f7;
 
         &:hover {
-          background: #f1f4ff;
+          background: #eef4ff;
+          border-color: #dbeafe;
         }
 
         a {
-          text-decoration: none;
-          color: $primary-color;
+          color: $primary;
           font-weight: 500;
+          text-decoration: none;
           display: flex;
           align-items: center;
           gap: 0.4rem;
 
-          &:hover {
-            text-decoration: underline;
-          }
-
           svg {
             font-size: 1rem;
           }
-        }
 
-        input {
-          flex: 1;
-          margin-right: 0.6rem;
-          padding: 0.4rem 0.8rem;
-          border-radius: 8px;
-          border: 1px solid #ccc;
-          &:focus {
-            border-color: $primary-color;
+          &:hover {
+            text-decoration: underline;
           }
         }
 
-        button {
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 1.1rem;
-          margin-left: 0.3rem;
-          color: $text-light;
-          transition: $transition;
+        .link-edit {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          input {
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            &:focus {
+              border-color: $primary;
+            }
+          }
+        }
 
-          &:hover {
-            color: $primary-color;
-            transform: scale(1.2);
+        .link-actions {
+          display: flex;
+          gap: 0.5rem;
+
+          button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: $muted;
+            padding: 0.3rem;
+            border-radius: 6px;
+            transition: $transition;
+
+            &:hover {
+              color: $primary;
+              background: rgba(37, 99, 235, 0.1);
+            }
+
+            &.delete:hover {
+              color: $danger;
+              background: rgba(220, 38, 38, 0.1);
+            }
           }
         }
       }
     }
   }
 
-  // 📱 Mobile
+  // 🔸 Mobile
   @media (max-width: 768px) {
     padding: 1.5rem;
 
@@ -227,10 +256,9 @@ $transition: all 0.25s ease;
       padding: 1.2rem;
 
       .section-header {
-        flex-wrap: wrap;
-        h3 {
-          font-size: 1.2rem;
-        }
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
       }
 
       ul li {

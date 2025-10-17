@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FiExternalLink, FiEdit, FiTrash2, FiCheck, FiX, FiPlus } from "react-icons/fi";
-import {jwtDecode} from "jwt-decode";
+import {
+  FiExternalLink,
+  FiEdit,
+  FiTrash2,
+  FiCheck,
+  FiX,
+  FiPlus,
+} from "react-icons/fi";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import "./Links.scss";
 
@@ -33,7 +40,9 @@ const Links = () => {
       try {
         const decoded = jwtDecode(token);
         const roles = decoded.userTypes || [];
-        setIsAdminOrVorstand(roles.includes("admin") || roles.includes("vorstand"));
+        setIsAdminOrVorstand(
+          roles.includes("admin") || roles.includes("vorstand")
+        );
       } catch {
         setIsAdminOrVorstand(false);
       }
@@ -43,14 +52,16 @@ const Links = () => {
 
   const fetchSections = async () => {
     try {
-      const res = await axios.get("https://jugehoerig-backend.onrender.com/api/links");
+      const res = await axios.get(
+        "https://jugehoerig-backend.onrender.com/api/links"
+      );
       setSections(res.data);
     } catch (err) {
       console.error("Fehler beim Abrufen der Sections:", err);
     }
   };
 
-  // --- Section Aktionen ---
+  // --- SECTION AKTIONEN ---
   const handleEditSection = (section) => {
     setEditSectionId(section.id);
     setEditSectionTitle(section.subtitle);
@@ -73,7 +84,7 @@ const Links = () => {
   };
 
   const handleDeleteSection = async (sectionId) => {
-    if (!window.confirm("Section wirklich löschen?")) return;
+    if (!window.confirm("Möchtest du diese Sektion wirklich löschen?")) return;
     try {
       await axios.delete(
         `https://jugehoerig-backend.onrender.com/api/links/section/${sectionId}`,
@@ -85,7 +96,7 @@ const Links = () => {
     }
   };
 
-  // --- Link Aktionen ---
+  // --- LINK AKTIONEN ---
   const handleEditLink = (link) => {
     setEditLinkId(link.id);
     setEditLinkText(link.text);
@@ -93,7 +104,8 @@ const Links = () => {
   };
 
   const saveLinkEdit = async () => {
-    if (!editLinkText || !editLinkUrl) return alert("Text & URL angeben");
+    if (!editLinkText || !editLinkUrl)
+      return alert("Bitte Text und URL angeben!");
     try {
       await axios.put(
         `https://jugehoerig-backend.onrender.com/api/links/${editLinkId}`,
@@ -110,7 +122,7 @@ const Links = () => {
   };
 
   const handleDeleteLink = async (linkId, sectionId) => {
-    if (!window.confirm("Link wirklich löschen?")) return;
+    if (!window.confirm("Diesen Link wirklich löschen?")) return;
     try {
       await axios.delete(
         `https://jugehoerig-backend.onrender.com/api/links/${linkId}`,
@@ -118,7 +130,9 @@ const Links = () => {
       );
       setSections((prevSections) =>
         prevSections.map((s) =>
-          s.id === sectionId ? { ...s, links: s.links.filter((l) => l.id !== linkId) } : s
+          s.id === sectionId
+            ? { ...s, links: s.links.filter((l) => l.id !== linkId) }
+            : s
         )
       );
     } catch {
@@ -127,7 +141,8 @@ const Links = () => {
   };
 
   const handleAddLinkToSection = async (sectionId) => {
-    if (!newLinkText || !newLinkUrl) return alert("Text & URL angeben");
+    if (!newLinkText || !newLinkUrl)
+      return alert("Bitte Text und URL angeben!");
     try {
       await axios.post(
         `https://jugehoerig-backend.onrender.com/api/links/section/${sectionId}/link`,
@@ -145,16 +160,17 @@ const Links = () => {
 
   return (
     <div className="links-management">
-      <h2>Nützliche Links Verwaltung</h2>
+      <h2>📚 Nützliche Links Verwaltung</h2>
 
       {isAdminOrVorstand && (
-        <button
-          onClick={() => navigate("/create-link")}
-          className="plus-button"
-          title="Neue Sektion hinzufügen"
-        >
-          <FiPlus size={20} />
-        </button>
+        <div className="top-controls">
+          <button
+            onClick={() => navigate("/create-link")}
+            className="plus-button"
+          >
+            <FiPlus /> Neue Sektion hinzufügen
+          </button>
+        </div>
       )}
 
       {sections.map((section) => (
@@ -165,34 +181,42 @@ const Links = () => {
                 <input
                   value={editSectionTitle}
                   onChange={(e) => setEditSectionTitle(e.target.value)}
+                  placeholder="Neuer Sektions-Titel"
                 />
-                <button onClick={saveSectionEdit}><FiCheck /></button>
-                <button onClick={() => setEditSectionId(null)}><FiX /></button>
+                <button onClick={saveSectionEdit} title="Speichern">
+                  <FiCheck />
+                </button>
+                <button
+                  onClick={() => setEditSectionId(null)}
+                  title="Abbrechen"
+                >
+                  <FiX />
+                </button>
               </>
             ) : (
               <>
-                <h3>{section.subtitle}</h3>
+                <h3>📂 {section.subtitle}</h3>
                 {isAdminOrVorstand && (
-                  <>
+                  <div className="section-actions">
                     <button
                       onClick={() => handleEditSection(section)}
-                      title="Section bearbeiten"
+                      title="Titel bearbeiten"
                     >
                       <FiEdit />
                     </button>
                     <button
                       onClick={() => handleDeleteSection(section.id)}
-                      title="Section löschen"
+                      title="Sektion löschen"
                     >
                       <FiTrash2 />
                     </button>
                     <button
                       onClick={() => setAddingLinkToSection(section.id)}
-                      title="Link hinzufügen"
+                      title="Neuen Link hinzufügen"
                     >
                       <FiPlus />
                     </button>
-                  </>
+                  </div>
                 )}
               </>
             )}
@@ -201,51 +225,90 @@ const Links = () => {
           {addingLinkToSection === section.id && (
             <div className="add-link">
               <input
-                placeholder="Link Text"
+                placeholder="Link Titel"
                 value={newLinkText}
                 onChange={(e) => setNewLinkText(e.target.value)}
               />
               <input
-                placeholder="Link URL"
+                placeholder="https://..."
                 value={newLinkUrl}
                 onChange={(e) => setNewLinkUrl(e.target.value)}
               />
-              <button onClick={() => handleAddLinkToSection(section.id)}><FiCheck /></button>
-              <button onClick={() => setAddingLinkToSection(null)}><FiX /></button>
+              <button
+                onClick={() => handleAddLinkToSection(section.id)}
+                title="Speichern"
+              >
+                <FiCheck />
+              </button>
+              <button
+                onClick={() => setAddingLinkToSection(null)}
+                title="Abbrechen"
+              >
+                <FiX />
+              </button>
             </div>
           )}
 
           <ul>
-            {section.links.map((link) => (
-              <li key={link.id}>
-                {editLinkId === link.id ? (
-                  <>
-                    <input
-                      value={editLinkText}
-                      onChange={(e) => setEditLinkText(e.target.value)}
-                    />
-                    <input
-                      value={editLinkUrl}
-                      onChange={(e) => setEditLinkUrl(e.target.value)}
-                    />
-                    <button onClick={saveLinkEdit}><FiCheck /></button>
-                    <button onClick={() => setEditLinkId(null)}><FiX /></button>
-                  </>
-                ) : (
-                  <>
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">
-                      <FiExternalLink /> {link.text}
-                    </a>
-                    {isAdminOrVorstand && (
-                      <>
-                        <button onClick={() => handleEditLink(link)}><FiEdit /></button>
-                        <button onClick={() => handleDeleteLink(link.id, section.id)}><FiTrash2 /></button>
-                      </>
-                    )}
-                  </>
-                )}
-              </li>
-            ))}
+            {section.links.length > 0 ? (
+              section.links.map((link) => (
+                <li key={link.id}>
+                  {editLinkId === link.id ? (
+                    <>
+                      <input
+                        value={editLinkText}
+                        onChange={(e) => setEditLinkText(e.target.value)}
+                        placeholder="Neuer Linktitel"
+                      />
+                      <input
+                        value={editLinkUrl}
+                        onChange={(e) => setEditLinkUrl(e.target.value)}
+                        placeholder="https://..."
+                      />
+                      <button onClick={saveLinkEdit} title="Speichern">
+                        <FiCheck />
+                      </button>
+                      <button
+                        onClick={() => setEditLinkId(null)}
+                        title="Abbrechen"
+                      >
+                        <FiX />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FiExternalLink /> {link.text}
+                      </a>
+                      {isAdminOrVorstand && (
+                        <div className="link-actions">
+                          <button
+                            onClick={() => handleEditLink(link)}
+                            title="Link bearbeiten"
+                          >
+                            <FiEdit />
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteLink(link.id, section.id)
+                            }
+                            title="Link löschen"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </li>
+              ))
+            ) : (
+              <p className="no-links">Keine Links in dieser Sektion</p>
+            )}
           </ul>
         </div>
       ))}

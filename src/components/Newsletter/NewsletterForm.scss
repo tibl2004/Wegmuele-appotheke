@@ -1,0 +1,148 @@
+.newsletter-container {
+    font-family: 'Inter', sans-serif;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    background-color: #f7f7f7;
+    color: #1a1a1a;
+  }
+  
+  .newsletter-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #F59422;
+  }
+  
+  .newsletter-message {
+    padding: 15px 20px;
+    background-color: #dff0d8;
+    color: #3c763d;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+  
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  
+    label {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+  
+    input, textarea {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+  }
+  
+  .section-heading, .preview-heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #F59422;
+    margin-bottom: 10px;
+  }
+  
+  .newsletter-section {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  
+      h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+  
+      button {
+        background-color: #F59422;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    }
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 15px;
+  
+    button {
+      flex: 1;
+      padding: 14px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      background-color: #F59422;
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+  
+  .newsletter-preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .newsletter-preview {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  
+    h3 {
+      color: #F59422;
+      font-weight: 600;
+      margin: 0;
+    }
+  
+    p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+  
+    a {
+      color: #F59422;
+      font-weight: 500;
+      text-decoration: none;
+    }
+  
+    img {
+      max-width: 250px;
+      max-height: 250px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+  }
+  
