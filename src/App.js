@@ -14,7 +14,6 @@ import Home from './components/Landingpage/Home';
 import CreateEventForm from './components/Events/CreateEventForm';
 import NewsletterForm from './components/Newsletter/NewsletterForm';
 import SubscribeForm from './components/Newsletter/SubscribeForm';
-import NewsletterCreateForm from './components/Newsletter/NewsletterCreateForm';
 import ImportSubscribersTable from './components/Newsletter/ImportSubcribersTable';
 import NewsletterSubscribersList from './components/Newsletter/NewsletterSubscribersList';
 import CreateBlog from './components/Blogs/CreateBlog';
