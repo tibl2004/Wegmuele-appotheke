@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Home.scss';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [vorstand, setVorstand] = useState([]);
@@ -96,37 +97,40 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* ================= Events ================= */}
-      {events.length > 0 && (
-        <section className="events-section">
-          <h1>Unsere kommenden Veranstaltungen</h1>
-          <div className="blogs-grid">
-            {events.map(event => (
-              <div className="blogs-card" key={event.id}>
-                {event.bild && (
-                  <img
-                    src={event.bild}
-                    alt={event.titel}
-                    className="blogs-image"
-                  />
-                )}
-                <div className="blogs-date">
-                  {new Date(event.von).toLocaleDateString('de-DE', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </div>
-                <div className="blogs-info">
-                  <h2>{event.titel}</h2>
-                  {event.beschreibung && <p>{getPreview(event.beschreibung)}</p>}
-                </div>
-              </div>
-            ))}
+{/* ================= Events ================= */}
+{events.length > 0 && (
+  <section className="events-section">
+    <h1>Unsere kommenden Veranstaltungen</h1>
+    <div className="blogs-grid">
+      {events.map(event => (
+        <Link
+          key={event.id}
+          to={`/event/${event.id}`} // React Router Link
+          className="blogs-card" // Styling bleibt erhalten
+        >
+          {event.bild && (
+            <img
+              src={event.bild}
+              alt={event.titel}
+              className="blogs-image"
+            />
+          )}
+          <div className="blogs-date">
+            {new Date(event.von).toLocaleDateString('de-DE', {
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric'
+            })}
           </div>
-        </section>
-      )}
+          <div className="blogs-info">
+            <h2>{event.titel}</h2>
+            {event.beschreibung && <p>{getPreview(event.beschreibung)}</p>}
+          </div>
+        </Link>
+      ))}
+    </div>
+  </section>
+)}
 
       {/* ================= Blogs ================= */}
       {blogs.length > 0 && (
