@@ -1,8 +1,9 @@
+// EventDetail.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./EventDetail.scss";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiCalendar } from "react-icons/fi";
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -204,6 +205,32 @@ export default function EventDetail() {
     }
   };
 
+  // --- Kalender-Funktionen ---
+  const generateICS = (ev) => {
+    const start = new Date(ev.von).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(ev.bis).toISOString().replace(/-|:|\.\d+/g, "");
+    const icsContent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:${ev.titel}
+DESCRIPTION:${ev.beschreibung}
+LOCATION:${ev.ort}
+DTSTART:${start}
+DTEND:${end}
+END:VEVENT
+END:VCALENDAR
+    `.trim();
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    return URL.createObjectURL(blob);
+  };
+
+  const generateGoogleCalendarLink = (ev) => {
+    const start = new Date(ev.von).toISOString().replace(/-|:|\.\d+/g, "");
+    const end = new Date(ev.bis).toISOString().replace(/-|:|\.\d+/g, "");
+    return `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(ev.titel)}&dates=${start}/${end}&details=${encodeURIComponent(ev.beschreibung)}&location=${encodeURIComponent(ev.ort)}`;
+  };
+
   if (loading) return <p className="loading">Lade Event...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!event) return null;
@@ -221,7 +248,7 @@ export default function EventDetail() {
         ) : (
           <>
             <h1>{event.titel}</h1>
-            {event.bild && <img src={event.bild} alt={event.bildtitel} />}
+            {event.bild && <img src={event.bild} alt={event.bildtitel} className="event-image" />}
           </>
         )}
       </div>
@@ -229,7 +256,6 @@ export default function EventDetail() {
       <div className="event-info">
         {editMode ? (
           <>
-            {/* Bearbeiten Inputs */}
             <textarea name="beschreibung" value={formData.beschreibung} onChange={handleInputChange} placeholder="Beschreibung" />
             <input name="ort" value={formData.ort} onChange={handleInputChange} placeholder="Ort" />
             <input type="datetime-local" name="von" value={formData.von} onChange={handleInputChange} />
@@ -237,7 +263,6 @@ export default function EventDetail() {
             <label><input type="checkbox" name="alle" checked={formData.alle} onChange={handleInputChange} /> Für Alle</label>
             <label><input type="checkbox" name="supporter" checked={formData.supporter} onChange={handleInputChange} /> Supporter Event</label>
 
-            {/* Preise */}
             <div className="preise-edit">
               <h3>Preisoptionen</h3>
               {(formData.preise || []).map((p,i) => (
@@ -250,7 +275,6 @@ export default function EventDetail() {
               <button type="button" onClick={addPreis}>Preis hinzufügen</button>
             </div>
 
-            {/* Formularfelder */}
             <div className="felder-edit">
               <h3>Formularfelder</h3>
               {(formData.felder || []).map((f,i) => (
@@ -290,6 +314,17 @@ export default function EventDetail() {
         )}
       </div>
 
+      {!editMode && (
+        <div className="calendar-buttons">
+          <a href={generateICS(event)} download={`${event.titel}.ics`} className="calendar-button">
+            <FiCalendar /> Zum Kalender hinzufügen
+          </a>
+          <a href={generateGoogleCalendarLink(event)} target="_blank" rel="noopener noreferrer" className="calendar-button google">
+            Google Calendar
+          </a>
+        </div>
+      )}
+
       {!editMode && (event.formular || []).length > 0 && (
         <div className="event-formular">
           <h2>Anmeldeformular</h2>
@@ -311,7 +346,7 @@ export default function EventDetail() {
                 )}
               </div>
             ))}
-            <button type="submit">Anmelden</button>
+            <button type="submit" className="register-button">Anmelden</button>
           </form>
         </div>
       )}
@@ -322,7 +357,6 @@ export default function EventDetail() {
           <button className="delete-button" onClick={handleDelete}><FiTrash2 /> Löschen</button>
         </div>
       )}
-
     </div>
   );
 }
