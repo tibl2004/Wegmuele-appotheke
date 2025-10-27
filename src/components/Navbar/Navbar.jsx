@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import "./Navbar.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faUser,
   faLink,
   faBars,
+  faTimes,
   faSignInAlt,
   faSignOutAlt,
   faPeopleGroup,
   faPaperPlane,
   faPencil,
 } from "@fortawesome/free-solid-svg-icons";
+import { jwtDecode } from "jwt-decode";
+import "./Navbar.scss";
 import logo from "../../logo.png";
 
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userTypes, setUserTypes] = useState([]); // alle Rollen
-  const [userType, setUserType] = useState(null); // Hauptrolle
+  const [userTypes, setUserTypes] = useState([]);
   const navigate = useNavigate();
 
+  // Loginstatus + Rollen prüfen
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -31,39 +33,41 @@ function Navbar() {
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        const roles = parsedUser?.userTypes || [];
-
-        setUserTypes(roles);
-
-        if (roles.includes("vorstand")) {
-          setUserType("vorstand");
-        } else if (roles.includes("vorstand")) {
-          setUserType("vorstand");
-        } else {
-          setUserType(null);
-        }
+        setUserTypes(parsedUser?.userTypes || []);
       } catch (err) {
         console.error("Fehler beim Parsen von user:", err);
         setUserTypes([]);
-        setUserType(null);
       }
     } else {
       setUserTypes([]);
-      setUserType(null);
     }
   }, []);
+
+  // Menü schließen, wenn außerhalb geklickt wird
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        burgerMenuActive &&
+        !e.target.closest(".navbar-container") &&
+        !e.target.closest(".menu-icon")
+      ) {
+        setBurgerMenuActive(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [burgerMenuActive]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     setUserTypes([]);
-    setUserType(null);
     navigate("/login");
   };
 
   return (
-    <nav className={`navbar ${burgerMenuActive ? "burger-menu-active" : ""}`}>
+    <nav className={`navbar ${burgerMenuActive ? "active" : ""}`}>
       <div className="navbar-container">
         {/* Logo */}
         <div className="logo-box">
@@ -72,16 +76,16 @@ function Navbar() {
           </NavLink>
         </div>
 
-        {/* Burger Menu Icon */}
+        {/* Burger Icon */}
         <div
           className="menu-icon"
           onClick={() => setBurgerMenuActive(!burgerMenuActive)}
         >
-          <FontAwesomeIcon icon={faBars} />
+          <FontAwesomeIcon icon={burgerMenuActive ? faTimes : faBars} />
         </div>
 
-        {/* Navigation Items */}
-        <ul className={`nav-items ${burgerMenuActive ? "active" : ""}`}>
+        {/* Navigation */}
+        <ul className={`nav-items ${burgerMenuActive ? "open" : ""}`}>
           <NavItem to="/" text="Home" icon={faHome} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/events" text="Events" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/blogs" text="Blog" icon={faPencil} setBurgerMenuActive={setBurgerMenuActive} />
@@ -95,19 +99,13 @@ function Navbar() {
             <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />
           ) : (
             <>
-              {/* Wenn user BOTH admin UND vorstand ist */}
-              {userTypes.includes("vorstand") && userTypes.includes("vorstand") && (
+              {userTypes.includes("vorstand") && (
                 <NavItem to="/vorstand" text="Vorstand" icon={faPeopleGroup} setBurgerMenuActive={setBurgerMenuActive} />
               )}
-
               <NavItem to="/profil" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-
               <li>
-                <button
-                  className="nav-link logout-button"
-                  onClick={handleLogout}
-                >
-                  <FontAwesomeIcon icon={faSignOutAlt} className="icon" /> Logout
+                <button className="nav-link logout" onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                 </button>
               </li>
             </>
