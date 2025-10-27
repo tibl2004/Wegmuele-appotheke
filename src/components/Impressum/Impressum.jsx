@@ -17,7 +17,7 @@ export default function Impressum() {
         <p><strong>Vertreten durch:</strong> Timo Blumer</p>
         <p>
           <strong>Website:</strong>{" "}
-          <a href="https://www.tbs-solutions.ch" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.tbs-solutions.net" target="_blank" rel="noopener noreferrer">
             www.tbs-solutions.ch
           </a>
         </p>
@@ -30,7 +30,7 @@ export default function Impressum() {
           <strong>E-Mail:</strong>{" "}
           <a href="mailto:timo.blumer@gmx.ch">timo.blumer@gmx.ch</a><br />
           <strong>Website:</strong>{" "}
-          <a href="https://www.tbs-solutions.ch" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.tbs-solutions.net" target="_blank" rel="noopener noreferrer">
             www.tbs-solutions.ch
           </a>
         </p>

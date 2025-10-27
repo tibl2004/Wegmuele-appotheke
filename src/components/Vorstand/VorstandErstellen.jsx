@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './VorstandForm.scss';
 import axios from 'axios';
+import './VorstandForm.scss';
 
 export default function VorstandForm() {
   const [formData, setFormData] = useState({
@@ -23,17 +23,54 @@ export default function VorstandForm() {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // 🔹 Eingaben ändern
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // 🔹 Foto laden & Base64 umwandeln
+  const handleFotoChange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.type)) {
+      setError('Nur PNG, JPG oder WEBP erlaubt.');
+      setFotoPreview(null);
+      setFormData(prev => ({ ...prev, foto: '' }));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData(prev => ({ ...prev, foto: reader.result }));
+      setFotoPreview(reader.result);
+      setError('');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // 🔹 Formular senden
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
 
-    const requiredFields = ['geschlecht', 'vorname', 'nachname', 'adresse', 'plz', 'ort', 'benutzername', 'passwort', 'telefon', 'email', 'rolle'];
+    // Pflichtfelder prüfen
+    const requiredFields = [
+      'geschlecht',
+      'vorname',
+      'nachname',
+      'adresse',
+      'plz',
+      'ort',
+      'benutzername',
+      'passwort',
+      'telefon',
+      'email',
+      'rolle'
+    ];
+
     for (const field of requiredFields) {
       if (!formData[field]) {
         setError('Bitte alle Pflichtfelder ausfüllen.');
@@ -42,10 +79,15 @@ export default function VorstandForm() {
     }
 
     try {
-      const response = await axios.post('/api/vorstand', formData, {
-        headers: { 'Content-Type': 'application/json' }
+      const token = localStorage.getItem('token'); // 🔐 Auth-Token
+      const res = await axios.post('https://jugehoerig-backend.onrender.com/api/vorstand', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       });
-      setSuccessMsg('Vorstand erfolgreich erstellt!');
+
+      setSuccessMsg(res.data.message || 'Vorstand erfolgreich erstellt!');
       setFormData({
         geschlecht: '',
         vorname: '',
@@ -63,42 +105,27 @@ export default function VorstandForm() {
       });
       setFotoPreview(null);
     } catch (err) {
-      if (err.response && err.response.data?.error) {
+      if (err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
-        setError('Fehler beim Erstellen des Vorstands oder Netzwerkfehler.');
+        setError('Fehler beim Erstellen des Vorstands.');
       }
     }
   };
 
-  const handleFotoChange = e => {
-    const file = e.target.files[0];
-    if (file && file.type === 'image/png') {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, foto: reader.result }));
-        setFotoPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setError('');
-    } else {
-      setError('Bitte nur PNG-Bilder hochladen.');
-      setFotoPreview(null);
-      setFormData(prev => ({ ...prev, foto: '' }));
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="vorstand-form">
-      {fotoPreview && <img src={fotoPreview} alt="Foto Vorschau" className="foto-preview" />}
+    <form className="vorstand-form" onSubmit={handleSubmit}>
+      {fotoPreview && (
+        <img src={fotoPreview} alt="Foto Vorschau" className="foto-preview" />
+      )}
+
       <div className="form-content">
         {error && <p className="error-message">{error}</p>}
         {successMsg && <p className="success-message">{successMsg}</p>}
 
         <div className="form-row">
-          <label htmlFor="geschlecht">Geschlecht*</label>
+          <label>Geschlecht*</label>
           <select
-            id="geschlecht"
             name="geschlecht"
             value={formData.geschlecht}
             onChange={handleChange}
@@ -113,9 +140,8 @@ export default function VorstandForm() {
 
         <div className="form-row two-columns">
           <div>
-            <label htmlFor="vorname">Vorname*</label>
+            <label>Vorname*</label>
             <input
-              id="vorname"
               type="text"
               name="vorname"
               value={formData.vorname}
@@ -124,9 +150,8 @@ export default function VorstandForm() {
             />
           </div>
           <div>
-            <label htmlFor="nachname">Nachname*</label>
+            <label>Nachname*</label>
             <input
-              id="nachname"
               type="text"
               name="nachname"
               value={formData.nachname}
@@ -136,9 +161,8 @@ export default function VorstandForm() {
           </div>
         </div>
 
-        <label htmlFor="adresse">Adresse*</label>
+        <label>Adresse*</label>
         <input
-          id="adresse"
           type="text"
           name="adresse"
           value={formData.adresse}
@@ -148,9 +172,8 @@ export default function VorstandForm() {
 
         <div className="form-row two-columns">
           <div>
-            <label htmlFor="plz">PLZ*</label>
+            <label>PLZ*</label>
             <input
-              id="plz"
               type="text"
               name="plz"
               value={formData.plz}
@@ -159,9 +182,8 @@ export default function VorstandForm() {
             />
           </div>
           <div>
-            <label htmlFor="ort">Ort*</label>
+            <label>Ort*</label>
             <input
-              id="ort"
               type="text"
               name="ort"
               value={formData.ort}
@@ -171,9 +193,8 @@ export default function VorstandForm() {
           </div>
         </div>
 
-        <label htmlFor="benutzername">Benutzername*</label>
+        <label>Benutzername*</label>
         <input
-          id="benutzername"
           type="text"
           name="benutzername"
           value={formData.benutzername}
@@ -181,9 +202,8 @@ export default function VorstandForm() {
           required
         />
 
-        <label htmlFor="passwort">Passwort*</label>
+        <label>Passwort*</label>
         <input
-          id="passwort"
           type="password"
           name="passwort"
           value={formData.passwort}
@@ -191,9 +211,8 @@ export default function VorstandForm() {
           required
         />
 
-        <label htmlFor="telefon">Telefon*</label>
+        <label>Telefon*</label>
         <input
-          id="telefon"
           type="tel"
           name="telefon"
           value={formData.telefon}
@@ -201,9 +220,8 @@ export default function VorstandForm() {
           required
         />
 
-        <label htmlFor="email">Email*</label>
+        <label>Email*</label>
         <input
-          id="email"
           type="email"
           name="email"
           value={formData.email}
@@ -211,26 +229,23 @@ export default function VorstandForm() {
           required
         />
 
-        <label htmlFor="foto">Foto (PNG)</label>
+        <label>Foto (PNG, JPG oder WEBP)</label>
         <input
-          id="foto"
           type="file"
-          accept="image/png"
+          accept="image/png, image/jpeg, image/jpg, image/webp"
           onChange={handleFotoChange}
         />
 
-        <label htmlFor="beschreibung">Beschreibung</label>
+        <label>Beschreibung</label>
         <textarea
-          id="beschreibung"
           name="beschreibung"
           value={formData.beschreibung}
           onChange={handleChange}
-          rows={4}
+          rows="3"
         />
 
-        <label htmlFor="rolle">Rolle*</label>
+        <label>Rolle*</label>
         <select
-          id="rolle"
           name="rolle"
           value={formData.rolle}
           onChange={handleChange}

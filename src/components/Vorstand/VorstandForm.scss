@@ -1,188 +1,113 @@
-/* VorstandForm.scss */
+.vorstand-section {
+  padding: 2rem;
+  background: #fafafa;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  color: #222;
 
-.vorstand-form {
-    max-width: 700px;
-    margin: 3rem auto 5rem;
-    padding: 3rem 3.5rem;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.07),
-      0 12px 30px rgba(51, 102, 255, 0.15);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #1e1e2f;
+  .vorstand-header {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    transition: box-shadow 0.3s ease;
-  
-    &:hover {
-      box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.1),
-        0 18px 40px rgba(51, 102, 255, 0.25);
-    }
-  
-    .foto-preview {
-      align-self: center;
-      width: 180px;
-      height: 180px;
-      border-radius: 20px;
-      object-fit: cover;
-      box-shadow:
-        0 10px 25px rgba(51, 102, 255, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-      &:hover {
-        transform: scale(1.08);
-        box-shadow:
-          0 12px 35px rgba(51, 102, 255, 0.5);
-      }
-    }
-  
-    .form-content {
-      width: 100%;
-    }
-  
-    .error-message,
-    .success-message {
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+
+    h2 {
+      font-size: 1.8rem;
       font-weight: 600;
-      font-size: 1.1rem;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-      user-select: none;
+      color: #333;
     }
-  
-    .error-message {
-      background-color: #fff1f0;
-      color: #d93025;
-      border: 1.8px solid #d93025;
-    }
-  
-    .success-message {
-      background-color: #e9f7ef;
-      color: #188038;
-      border: 1.8px solid #188038;
-    }
-  
-    label {
-      display: block;
-      font-weight: 700;
-      font-size: 1.15rem;
-      margin-bottom: 0.6rem;
-      color: #222244;
-      user-select: none;
-      letter-spacing: 0.03em;
-    }
-  
-    input[type='text'],
-    input[type='password'],
-    input[type='email'],
-    input[type='tel'],
-    select,
-    textarea,
-    input[type='file'] {
-      width: 100%;
-      padding: 0.85rem 1.2rem;
-      border: 2.2px solid #ccd6f6;
-      border-radius: 14px;
-      font-size: 1.1rem;
-      font-family: inherit;
-      color: #333a56;
-      background-color: #fefeff;
-      box-shadow: inset 0 3px 6px rgb(0 0 0 / 0.06);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  
-      &:focus {
-        outline: none;
-        border-color: #3366ff;
-        box-shadow: 0 0 10px 3px rgba(51, 102, 255, 0.5);
-        background-color: #fff;
-      }
-    }
-  
-    textarea {
-      resize: vertical;
-      min-height: 110px;
-      font-family: inherit;
-      line-height: 1.4;
-    }
-  
-    input[type='file'] {
-      padding: 0.5rem 0.7rem;
-      background-color: transparent;
+
+    .create-button {
+      background: linear-gradient(135deg, #f59422, #f56f00);
       border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 1.05rem;
-      color: #3366ff;
-      transition: color 0.25s ease;
-  
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+
       &:hover {
-        color: #254eda;
-      }
-  
-      &:focus {
-        outline: none;
-        box-shadow: none;
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #f5a122, #f56f00);
       }
     }
-  
-    .form-row {
-      margin-top: 2rem;
-  
-      &.two-columns {
+  }
+
+  .vorstand-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.8rem;
+    list-style: none;
+    padding: 0;
+
+    .vorstand-item {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      .foto-wrapper {
+        width: 100%;
+        height: 220px;
+        background: #f0f0f0;
         display: flex;
-        gap: 1.8rem;
-  
-        > div {
-          flex: 1;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .foto-placeholder {
+          color: #aaa;
+          font-size: 0.9rem;
+        }
+      }
+
+      .info {
+        padding: 1rem;
+
+        h3 {
+          font-size: 1.2rem;
+          color: #333;
+          margin-bottom: 0.3rem;
+        }
+
+        .rolle {
+          color: #f59422;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .beschreibung {
+          font-size: 0.95rem;
+          color: #555;
+          line-height: 1.4;
         }
       }
     }
-  
-    button[type='submit'] {
-      margin-top: 3rem;
-      padding: 1rem 2.4rem;
-      font-weight: 700;
-      font-size: 1.35rem;
-      border: none;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #3366ff, #6699ff);
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 8px 22px rgba(51, 102, 255, 0.5);
-      transition: background 0.4s ease, box-shadow 0.4s ease;
-  
-      &:hover,
-      &:focus {
-        background: linear-gradient(135deg, #254eda, #4477ee);
-        box-shadow: 0 12px 28px rgba(51, 102, 255, 0.75);
-        outline: none;
-      }
-    }
   }
-  
-  /* Responsive */
-  @media (max-width: 680px) {
-    .vorstand-form {
-      padding: 2rem 2.2rem;
-  
-      .foto-preview {
-        width: 140px;
-        height: 140px;
-        border-radius: 16px;
-      }
-  
-      .form-row.two-columns {
-        flex-direction: column;
-        gap: 1.3rem;
-      }
-  
-      button[type='submit'] {
-        width: 100%;
-        font-size: 1.25rem;
-        padding: 1rem 0;
-      }
-    }
+
+  .loading,
+  .error,
+  .no-data {
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 2rem;
+    color: #777;
   }
-  
+
+  .error {
+    color: #d9534f;
+  }
+}
