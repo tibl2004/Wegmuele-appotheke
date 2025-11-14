@@ -2,20 +2,16 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHome,
-  faUser,
-  faLink,
   faBars,
   faTimes,
   faSignInAlt,
   faSignOutAlt,
-  faPeopleGroup,
-  faPaperPlane,
-  faPencil,
+  faPhone,
+  faClock,
 } from "@fortawesome/free-solid-svg-icons";
-import { jwtDecode } from "jwt-decode";
 import "./Navbar.scss";
 import logo from "../../logo.png";
+import banner from "../../banner.png"; // <-- Dein Bild hier einfügen
 
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
@@ -23,11 +19,9 @@ function Navbar() {
   const [userTypes, setUserTypes] = useState([]);
   const navigate = useNavigate();
 
-  // Loginstatus + Rollen prüfen
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
-
     setIsLoggedIn(!!token);
 
     if (userData) {
@@ -43,7 +37,6 @@ function Navbar() {
     }
   }, []);
 
-  // Menü schließen, wenn außerhalb geklickt wird
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -67,64 +60,97 @@ function Navbar() {
   };
 
   return (
-    <nav className={`navbar ${burgerMenuActive ? "active" : ""}`}>
-      <div className="navbar-container">
-        {/* Logo */}
-        <div className="logo-box">
-          <NavLink to="/" onClick={() => setBurgerMenuActive(false)}>
-            <img src={logo} alt="Logo" className="logo" />
-          </NavLink>
+    <>
+      <nav className={`navbar ${burgerMenuActive ? "active" : ""}`}>
+        {/* Info-Bar */}
+        <div className="navbar-info">
+          <span>
+            <FontAwesomeIcon icon={faClock} /> Mo–Fr: 08:00–18:30 | Sa: 08:00–13:00
+          </span>
+          <span>
+            <FontAwesomeIcon icon={faPhone} />
+            <a href="tel:0900989900" className="phone-link">
+              Notfall: 0900 98 99 00
+            </a>
+          </span>
+
         </div>
 
-        {/* Burger Icon */}
-        <div
-          className="menu-icon"
-          onClick={() => setBurgerMenuActive(!burgerMenuActive)}
-        >
-          <FontAwesomeIcon icon={burgerMenuActive ? faTimes : faBars} />
+        <div className="navbar-container">
+          {/* Logo */}
+          <div className="logo-box">
+            <NavLink to="/" onClick={() => setBurgerMenuActive(false)}>
+              <img src={logo} alt="Wegmühle-Apotheke" className="logo" />
+            </NavLink>
+          </div>
+
+          {/* Burger Icon */}
+          <div
+            className="menu-icon"
+            onClick={() => setBurgerMenuActive(!burgerMenuActive)}
+          >
+            <FontAwesomeIcon icon={burgerMenuActive ? faTimes : faBars} />
+          </div>
+
+          {/* Navigation */}
+          <ul className={`nav-items ${burgerMenuActive ? "open" : ""}`}>
+            <li className="nav-item dropdown">
+              <span>Angebot</span>
+              <ul className="dropdown-menu">
+                <NavItem to="/angebote/medikamente" text="Medikamente" />
+                <NavItem to="/angebote/schulmedizin" text="Schulmedizin" />
+                <NavItem to="/angebote/alternativmedizin" text="Alternativmedizin" />
+                <NavItem to="/angebote/herstellung" text="Herstellung" />
+                <NavItem to="/angebote/weitere-produkte" text="Weitere Produkte" />
+              </ul>
+            </li>
+
+            <li className="nav-item dropdown">
+              <span>Dienstleistungen</span>
+              <ul className="dropdown-menu">
+                <NavItem to="/dienstleistungen/pharmexpert" text="Pharmexpert" />
+              </ul>
+            </li>
+
+            <NavItem to="/team" text="Team" />
+            <NavItem to="/bilder" text="Bilder" />
+            <NavItem to="/kontakt" text="Kontakt" />
+
+            {!isLoggedIn ? (
+              <NavItem to="/login" text="Login" icon={faSignInAlt} />
+            ) : (
+              <>
+                {userTypes.includes("vorstand") && (
+                  <NavItem to="/vorstand" text="Vorstand" />
+                )}
+                <NavItem to="/profil" text="Profil" />
+                <li>
+                  <button className="nav-link logout" onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
+      </nav>
 
-        {/* Navigation */}
-        <ul className={`nav-items ${burgerMenuActive ? "open" : ""}`}>
-          <NavItem to="/" text="Home" icon={faHome} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/events" text="Events" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/blogs" text="Blog" icon={faPencil} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/subscribe-form" text="Newsletter" icon={faPaperPlane} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/links" text="Links" icon={faLink} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/ueber-uns" text="Über Uns" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/impressum" text="Impressum" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/kontakt" text="Kontakt" icon={faLink} setBurgerMenuActive={setBurgerMenuActive} />
-
-          {!isLoggedIn ? (
-            <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />
-          ) : (
-            <>
-              {userTypes.includes("vorstand") && (
-                <NavItem to="/vorstand" text="Vorstand" icon={faPeopleGroup} setBurgerMenuActive={setBurgerMenuActive} />
-              )}
-              <NavItem to="/profil" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-              <li>
-                <button className="nav-link logout" onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
+      {/* Banner / Foto unter der Navbar */}
+      <div className="navbar-banner">
+        <img src={banner} alt="Wegmühle-Apotheke Banner" />
       </div>
-    </nav>
+    </>
   );
 }
 
-function NavItem({ to, text, icon, setBurgerMenuActive }) {
+function NavItem({ to, text, icon }) {
   return (
     <li>
       <NavLink
         to={to}
         className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        onClick={() => setBurgerMenuActive(false)}
       >
-        <FontAwesomeIcon icon={icon} className="icon" /> {text}
+        {icon && <FontAwesomeIcon icon={icon} className="icon" />} {text}
       </NavLink>
     </li>
   );
