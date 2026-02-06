@@ -12,7 +12,6 @@ export default function Galerie() {
   const [galerieFiles, setGalerieFiles] = useState([]);
   const [logo, setLogo] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
-  const [banner, setBanner] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);

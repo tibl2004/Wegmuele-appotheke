@@ -9,7 +9,6 @@ const LoginForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [mussPasswortAendern, setMussPasswortAendern] = useState(false);
-  const [userId, setUserId] = useState(null);
   const [token, setToken] = useState('');
 
 // Schritt 1: Login
