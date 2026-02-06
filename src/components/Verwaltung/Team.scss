@@ -1,0 +1,182 @@
+/* ==============================
+   Team / Mitarbeiter Admin Styles
+   ============================== */
+   .mitarbeiter-admin {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+  
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+  
+    .error {
+      color: #f87171;
+      background: #fee2e2;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+  
+    .form {
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+  
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+  
+      input[type="text"],
+      input[type="file"] {
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s;
+  
+        &:focus {
+          border-color: #2563eb;
+        }
+      }
+  
+      .funktionen {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+  
+        label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.95rem;
+          cursor: pointer;
+  
+          input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: #2563eb;
+            cursor: pointer;
+          }
+        }
+      }
+  
+      button {
+        padding: 0.75rem 1.5rem;
+        background-color: #2563eb;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.2s;
+  
+        &:hover {
+          background-color: #1d4ed8;
+        }
+  
+        &:disabled {
+          background-color: #93c5fd;
+          cursor: not-allowed;
+        }
+      }
+  
+      button + button {
+        margin-left: 1rem;
+        background-color: #ef4444;
+  
+        &:hover {
+          background-color: #dc2626;
+        }
+      }
+    }
+  
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2rem;
+  
+      .item {
+        background: #ffffff;
+        border-radius: 1rem;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+  
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+  
+        img {
+          width: 100%;
+          height: 220px;
+          object-fit: cover;
+        }
+  
+        .info {
+          padding: 1rem;
+  
+          strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            color: #111827;
+          }
+  
+          .funktionen {
+            font-size: 0.9rem;
+            color: #6b7280;
+          }
+        }
+  
+        .actions {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.5rem 1rem 1rem;
+  
+          button {
+            background-color: #fbbf24;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+  
+            &:hover {
+              background-color: #f59e0b;
+            }
+  
+            &:last-child {
+              background-color: #ef4444;
+  
+              &:hover {
+                background-color: #dc2626;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    /* Responsive */
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+    }
+  }
+  

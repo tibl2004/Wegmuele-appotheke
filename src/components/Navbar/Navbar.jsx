@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -9,16 +9,25 @@ import {
   faPhone,
   faClock,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 import "./Navbar.scss";
-import logo from "../../logo.png";
-import banner from "../../banner.png"; // <-- Dein Bild hier einfügen
+
+// Backend-API URLs
+const LOGO_API = "https://wegm-hle-apotheke-backend.onrender.com/api/logo";
+const BANNER_API = "https://wegm-hle-apotheke-backend.onrender.com/api/banner";
 
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userTypes, setUserTypes] = useState([]);
-  const navigate = useNavigate();
+  const [logoUrl, setLogoUrl] = useState(null);
+  const [bannerUrl, setBannerUrl] = useState(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
+  // Login & Rollen prüfen
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -37,6 +46,30 @@ function Navbar() {
     }
   }, []);
 
+  // Logo und Banner vom Backend abrufen
+  useEffect(() => {
+    const fetchMedia = async () => {
+      try {
+        const [logoRes, bannerRes] = await Promise.all([
+          axios.get(`${LOGO_API}/current`),
+          axios.get(`${BANNER_API}/current`),
+        ]);
+
+        console.log("Logo Response:", logoRes.data);
+        console.log("Banner Response:", bannerRes.data);
+
+        setLogoUrl(logoRes.data.logoUrl || null);
+        setBannerUrl(bannerRes.data.bannerUrl || null);
+      } catch (err) {
+        console.error("Fehler beim Laden von Logo oder Banner:", err);
+        setLogoUrl(null);
+        setBannerUrl(null);
+      }
+    };
+    fetchMedia();
+  }, []);
+
+  // Klick außerhalb Burger-Menü schließen
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -61,26 +94,29 @@ function Navbar() {
 
   return (
     <>
+      {/* NAVBAR */}
       <nav className={`navbar ${burgerMenuActive ? "active" : ""}`}>
-        {/* Info-Bar */}
         <div className="navbar-info">
           <span>
             <FontAwesomeIcon icon={faClock} /> Mo–Fr: 08:00–18:30 | Sa: 08:00–13:00
           </span>
           <span>
-            <FontAwesomeIcon icon={faPhone} />
+            <FontAwesomeIcon icon={faPhone} />{" "}
             <a href="tel:0900989900" className="phone-link">
               Notfall: 0900 98 99 00
             </a>
           </span>
-
         </div>
 
         <div className="navbar-container">
           {/* Logo */}
           <div className="logo-box">
             <NavLink to="/" onClick={() => setBurgerMenuActive(false)}>
-              <img src={logo} alt="Wegmühle-Apotheke" className="logo" />
+              {logoUrl ? (
+                <img src={logoUrl} alt="Wegmühle-Apotheke" className="logo" />
+              ) : (
+                <span className="logo-placeholder">Logo</span>
+              )}
             </NavLink>
           </div>
 
@@ -113,7 +149,7 @@ function Navbar() {
             </li>
 
             <NavItem to="/team" text="Team" />
-            <NavItem to="/bilder" text="Bilder" />
+            <NavItem to="/galerie" text="Bilder" />
             <NavItem to="/kontakt" text="Kontakt" />
 
             {!isLoggedIn ? (
@@ -135,10 +171,16 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Banner / Foto unter der Navbar */}
-      <div className="navbar-banner">
-        <img src={banner} alt="Wegmühle-Apotheke Banner" />
-      </div>
+      {/* Banner dynamisch vom Backend */}
+      {!isLoginPage && (
+        <div className="navbar-banner">
+          {bannerUrl ? (
+            <img src={bannerUrl} alt="Wegmühle-Apotheke Banner" />
+          ) : (
+            <div className="banner-placeholder">Banner hier</div>
+          )}
+        </div>
+      )}
     </>
   );
 }

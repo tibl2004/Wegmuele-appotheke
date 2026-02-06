@@ -1,208 +1,43 @@
 /* Home.scss */
 
 .home-container {
-  font-family: 'Inter', sans-serif;
-  color: #222;
-  line-height: 1.5;
-}
-
-/* ================= Hero Section ================= */
-.hero-section {
-  position: relative;
-  width: 100%;
-  height: 60vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: hidden;
-
-  .hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-
-    .hero-image,
-    .hero-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-    }
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    color: #fff;
-
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .hero-button {
-      display: inline-block;
-      padding: 0.75rem 2rem;
-      background: linear-gradient(135deg, #ff7e5f, #feb47b);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: opacity 0.3s ease;
-    }
-  }
-}
-
-
-.events-section {
-  background: #F59422;
-
-}
-
-
-/* ================= Section Titles ================= */
-.events-section,
-.blogs-section,
-.vorstand-section {
-  padding: 3rem 2rem;
-
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-}
-
-/* ================= Cards Grid ================= */
-.blogs-grid,
-.vorstand-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-/* ================= Blog / Event Cards ================= */
-.blogs-card {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-
-  .blogs-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-
-  .blogs-date {
-    font-size: 0.85rem;
-    color: #ff7e5f;
-    padding: 0.5rem 1rem 0;
-    font-weight: 600;
-  }
-
-  .blogs-info {
-    padding: 1rem;
-    flex-grow: 1;
-
-    h2 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-      color: #222;
-    }
-
-    p {
-      font-size: 0.95rem;
-      color: #555;
-    }
-  }
-}
-
-/* ================= Vorstand Cards ================= */
-.vorstand-card {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  text-align: center;
-  padding: 1rem;
-
-  .vorstand-foto {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-
-  .placeholder-foto {
-    width: 100%;
-    height: 250px;
-    background: #ddd;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #888;
-    margin-bottom: 1rem;
-  }
-
-  .rolle {
-    font-size: 0.9rem;
-    color: #ff7e5f;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .vorstand-info {
-    h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #222;
-    }
-  }
-}
-
-/* ================= Loading & Error ================= */
-.loading,
-.error {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #ff7e5f;
+  align-items: center;
+  min-height: 80vh;
   padding: 2rem;
+  background-color: #f5f5f5;
 }
 
-/* ================= Responsive ================= */
-@media (max-width: 768px) {
-  .hero-section {
-    height: 50vh;
+.welcome-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 
-    .hero-content {
-      h1 {
-        font-size: 2rem;
-      }
-    }
-  }
+.welcome-box {
+  background-color: #ffffff;
+  padding: 3rem 4rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  max-width: 600px;
+}
 
-  .blogs-card .blogs-info h2,
-  .vorstand-card .vorstand-info h2 {
-    font-size: 1.1rem;
-  }
+.welcome-box h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.welcome-box h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: #0077b6; // Apotheken-Branding-Farbe z.B.
+}
+
+.welcome-box p {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #555;
 }

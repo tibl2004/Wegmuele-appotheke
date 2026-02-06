@@ -13,63 +13,64 @@ const LoginForm = () => {
   const [token, setToken] = useState('');
 
 // Schritt 1: Login
-const handleLogin = async (event) => {
-  event.preventDefault();
-  setError('');
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+
   try {
-    const response = await axios.post(
-      'https://jugehoerig-backend.onrender.com/api/login',
-      { benutzername: username, passwort: password }
+    const res = await axios.post(
+      "https://wegm-hle-apotheke-backend.onrender.com/api/login",
+      {
+        username,
+        password,
+      }
     );
 
-    const { token, id, userTypes, rolle, passwort_geaendert } = response.data;
+    const { token, id, userTypes, mustChangePassword } = res.data;
 
-    if (passwort_geaendert === 0) {   // 👈 fix
-      // Passwort muss beim ersten Login geändert werden
+    if (mustChangePassword) {
       setMussPasswortAendern(true);
-      setUserId(id);
       setToken(token);
     } else {
-      // Normaler Login
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify({ userTypes, rolle, id }));
-      window.location.href = '/';
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ id, userTypes }));
+      window.location.href = "/";
     }
-  } catch (error) {
+  } catch (err) {
     setError(
-      error.response?.data?.error ||
-        'Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.'
+      err.response?.data?.error ||
+        "Login fehlgeschlagen."
     );
   }
 };
 
 // Schritt 2: Passwort ändern beim ersten Login
-const handleChangePassword = async (event) => {
-  event.preventDefault();
-  setError('');
-
-  if (!newPassword || !confirmPassword) {
-    setError('Bitte geben Sie das neue Passwort zweimal ein.');
-    return;
-  }
+const handleChangePassword = async (e) => {
+  e.preventDefault();
+  setError("");
 
   if (newPassword !== confirmPassword) {
-    setError('Die Passwörter stimmen nicht überein.');
+    setError("Passwörter stimmen nicht überein.");
     return;
   }
 
   try {
-    await axios.put(
-      'https://jugehoerig-backend.onrender.com/api/login/change-password-erstlogin',
-      { neuesPasswort: newPassword },
-      { headers: { Authorization: `Bearer ${token}` } }
+    await axios.post(
+      "https://wegm-hle-apotheke-backend.onrender.com/api/login/change-password",
+      { newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    alert('Passwort erfolgreich geändert. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/login'; // 👈 direkter Redirect zurück
-  } catch (error) {
+    alert("Passwort geändert. Bitte erneut einloggen.");
+    window.location.href = "/login";
+  } catch (err) {
     setError(
-      error.response?.data?.error || 'Fehler beim Ändern des Passworts.'
+      err.response?.data?.error ||
+        "Passwortänderung fehlgeschlagen."
     );
   }
 };

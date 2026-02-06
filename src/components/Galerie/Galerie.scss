@@ -1,0 +1,237 @@
+/* =========================
+   Variables
+========================= */
+$bg-page: #f7f8fa;
+$bg-card: #ffffff;
+$border-light: #e6e8ec;
+$text-main: #1f2933;
+$text-muted: #6b7280;
+$accent: #8b5cf6; // elegant violett
+$danger: #dc2626;
+
+$radius: 14px;
+$transition: 0.25s ease;
+
+/* =========================
+   Page
+========================= */
+.galerie {
+  min-height: 100vh;
+  background: $bg-page;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  color: $text-main;
+
+  h1 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* =========================
+   Upload Section
+========================= */
+.upload {
+  background: $bg-card;
+  border: 1px solid $border-light;
+  border-radius: $radius;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+
+  input[type="file"] {
+    flex: 1;
+    font-size: 0.9rem;
+    color: $text-muted;
+
+    &::file-selector-button {
+      margin-right: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      border: 1px solid $border-light;
+      background: transparent;
+      cursor: pointer;
+      transition: $transition;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+    }
+  }
+
+  button {
+    background: $accent;
+    color: white;
+    border: none;
+    padding: 0.65rem 1.4rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* =========================
+   Gallery Grid
+========================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.6rem;
+}
+
+/* =========================
+   Gallery Item
+========================= */
+.item {
+  background: $bg-card;
+  border-radius: $radius;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+  transition: $transition;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.08),
+      0 16px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* =========================
+     Delete Button
+  ========================= */
+  button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: $transition;
+    backdrop-filter: blur(6px);
+
+    &:hover {
+      background: $danger;
+    }
+  }
+
+  &:hover button {
+    opacity: 1;
+  }
+}
+/* =========================
+   FULLSCREEN LIGHTBOX
+========================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.25s ease;
+
+  img {
+    max-width: 92vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  .close {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 4rem;
+    color: white;
+    cursor: pointer;
+    opacity: 0.6;
+    padding: 1rem;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.prev {
+      left: 20px;
+    }
+
+    &.next {
+      right: 20px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 600px) {
+  .upload {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}
