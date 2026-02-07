@@ -5,6 +5,7 @@ import LoginForm from './components/Login/LoginForm';
 import Galerie from "./components/Galerie/Galerie";
 import Home from "./components/Landingpage/Home";
 import Team from './components/Verwaltung/Team';
+import Contact from './components/Verwaltung/Contact';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/galerie" element={<Galerie />} />
         <Route path="/" element={<Home />} />
         <Route path="/team" element={<Team />} />
+        <Route path="/contact" element={<Contact />} />
 
         </Routes>
       </div>

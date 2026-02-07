@@ -1,5 +1,9 @@
 /* Navbar.scss */
 
+:root {
+  --navbar-height: 80px; // Desktop-Höhe der Navbar
+}
+
 .navbar {
   font-family: "Roboto", sans-serif;
   position: sticky;
@@ -7,8 +11,8 @@
   width: 100%;
   z-index: 999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 
-  /* Info-Bar */
   .navbar-info {
     background-color: #f5f5f5;
     color: #333;
@@ -25,53 +29,26 @@
     }
   }
 
-  /* Main Navbar */
   .navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #ffffff;
     padding: 0.8rem 2rem;
 
-    /* Logo */
     .logo-box {
       .logo {
         height: 55px;
-        transition: transform 0.3s;
-        &:hover {
-          transform: scale(1.05);
-        }
+        width: auto;
       }
     }
 
-    /* Burger Menu Icon */
     .menu-icon {
       display: none;
       font-size: 1.5rem;
       cursor: pointer;
-      color: hsl(160, 50%, 33%); // apotheken-grün
+      color: hsl(160, 50%, 33%);
     }
 
-    .navbar-banner {
-      width: 100%;
-      height: 400px; // Höhe des Banners
-      overflow: hidden;
-      position: relative;
-    
-      img {
-        width: 100%;
-        height: 40%;
-        object-fit: cover; // Bild füllt den Bereich, ohne zu verzerren
-        transition: transform 0.5s ease;
-      }
-    
-      &:hover img {
-        transform: scale(1.05); // leichter Zoom-Effekt beim Hover
-      }
-    }
-    
-
-    /* Navigation Items */
     .nav-items {
       display: flex;
       list-style: none;
@@ -89,32 +66,10 @@
           align-items: center;
           gap: 0.4rem;
           padding: 0.5rem 0.3rem;
-          transition: color 0.3s;
-
-          &.active,
-          &:hover {
-            color: #2a7f62;
-          }
-
-          .icon {
-            color: #2a7f62;
-          }
         }
 
-        /* Dropdown Menu */
         &.dropdown {
           cursor: pointer;
-
-          span {
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-            font-weight: 500;
-            color: #333;
-            &:hover {
-              color: #2a7f62;
-            }
-          }
 
           .dropdown-menu {
             display: none;
@@ -130,12 +85,6 @@
 
             li {
               padding: 0.5rem 1rem;
-              .nav-link {
-                width: 100%;
-              }
-              &:hover {
-                background-color: #f0f0f0;
-              }
             }
           }
 
@@ -144,7 +93,6 @@
           }
         }
 
-        /* Logout Button */
         .logout {
           background: #d9534f;
           color: #fff;
@@ -152,18 +100,12 @@
           padding: 0.45rem 0.8rem;
           border-radius: 5px;
           cursor: pointer;
-          transition: background 0.3s;
           font-weight: 500;
-
-          &:hover {
-            background: #c9302c;
-          }
         }
       }
     }
   }
 
-  /* Responsive: Mobile */
   @media (max-width: 992px) {
     .navbar-container {
       .menu-icon {
@@ -177,13 +119,12 @@
         right: 0;
         background: #ffffff;
         flex-direction: column;
-        gap: 0;
-        overflow: hidden;
         max-height: 0;
+        overflow: hidden;
         transition: max-height 0.3s ease-in-out;
 
         &.open {
-          max-height: 1000px; /* groß genug, um alle Links anzuzeigen */
+          max-height: 1000px;
         }
 
         li {
@@ -196,21 +137,23 @@
             width: 100%;
             padding: 0.75rem 2rem;
           }
-
-          &.dropdown {
-            .dropdown-menu {
-              position: static;
-              box-shadow: none;
-              background: #f9f9f9;
-              border-radius: 0;
-              padding: 0;
-              li {
-                padding-left: 2.5rem;
-              }
-            }
-          }
         }
       }
     }
+  }
+}
+
+/* Banner */
+.navbar-banner {
+  width: 100%; /* immer volle Breite */
+  height: auto; /* Höhe automatisch nach Bild */
+  display: block;
+  overflow: hidden;
+
+  img {
+    width: 100%; /* passt sich Bildschirmbreite an */
+    height: auto; /* proportional */
+    display: block;
+    object-fit: contain; /* ganzes Bild sichtbar */
   }
 }

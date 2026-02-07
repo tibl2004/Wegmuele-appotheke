@@ -150,7 +150,7 @@ function Navbar() {
 
             <NavItem to="/team" text="Team" />
             <NavItem to="/galerie" text="Bilder" />
-            <NavItem to="/kontakt" text="Kontakt" />
+            <NavItem to="/contact" text="Kontakt" />
 
             {!isLoggedIn ? (
               <NavItem to="/login" text="Login" icon={faSignInAlt} />
