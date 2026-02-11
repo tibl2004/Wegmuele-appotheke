@@ -19,7 +19,6 @@ const OPENHOURS_API = "https://wegm-hle-apotheke-backend.onrender.com/api/oeffnu
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userTypes, setUserTypes] = useState([]);
   const [logoUrl, setLogoUrl] = useState(null);
   const [bannerUrl, setBannerUrl] = useState(null);
   const [openHours, setOpenHours] = useState([]);
