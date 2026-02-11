@@ -28,7 +28,6 @@ function Navbar() {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
 
-  const isAdmin = userTypes.includes("admin");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
