@@ -12,9 +12,9 @@ import {
 import axios from "axios";
 import "./Navbar.scss";
 
-// Backend-API URLs
 const LOGO_API = "https://wegm-hle-apotheke-backend.onrender.com/api/logo";
 const BANNER_API = "https://wegm-hle-apotheke-backend.onrender.com/api/banner";
+const OPENHOURS_API = "https://wegm-hle-apotheke-backend.onrender.com/api/oeffnungszeiten";
 
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
@@ -22,31 +22,31 @@ function Navbar() {
   const [userTypes, setUserTypes] = useState([]);
   const [logoUrl, setLogoUrl] = useState(null);
   const [bannerUrl, setBannerUrl] = useState(null);
+  const [openHours, setOpenHours] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
 
-  // Login & Rollen prüfen
+  const isAdmin = userTypes.includes("admin");
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
+
     setIsLoggedIn(!!token);
 
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
         setUserTypes(parsedUser?.userTypes || []);
-      } catch (err) {
-        console.error("Fehler beim Parsen von user:", err);
+      } catch {
         setUserTypes([]);
       }
-    } else {
-      setUserTypes([]);
     }
   }, []);
 
-  // Logo und Banner vom Backend abrufen
+  // Banner / Logo laden
   useEffect(() => {
     const fetchMedia = async () => {
       try {
@@ -55,72 +55,77 @@ function Navbar() {
           axios.get(`${BANNER_API}/current`),
         ]);
 
-        console.log("Logo Response:", logoRes.data);
-        console.log("Banner Response:", bannerRes.data);
-
         setLogoUrl(logoRes.data.logoUrl || null);
         setBannerUrl(bannerRes.data.bannerUrl || null);
       } catch (err) {
-        console.error("Fehler beim Laden von Logo oder Banner:", err);
-        setLogoUrl(null);
-        setBannerUrl(null);
+        console.error(err);
       }
     };
+
     fetchMedia();
   }, []);
 
-  // Klick außerhalb Burger-Menü schließen
+  // Öffnungszeiten laden
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        burgerMenuActive &&
-        !e.target.closest(".navbar-container") &&
-        !e.target.closest(".menu-icon")
-      ) {
-        setBurgerMenuActive(false);
+    const fetchOpenHours = async () => {
+      try {
+        const res = await axios.get(OPENHOURS_API);
+        setOpenHours(res.data);
+      } catch (err) {
+        console.error("Fehler beim Abrufen der Öffnungszeiten:", err);
       }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [burgerMenuActive]);
+    fetchOpenHours();
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.clear();
     setIsLoggedIn(false);
-    setUserTypes([]);
     navigate("/login");
   };
 
   return (
     <>
+      {/* HERO BANNER */}
+      {!isLoginPage && bannerUrl && (
+        <div className="hero-banner">
+          <img src={bannerUrl} alt="Banner" />
+          <div className="hero-overlay">
+            <h1>Wegmühle Apotheke</h1>
+            <p>Gesundheit & Beratung auf höchstem Niveau</p>
+          </div>
+        </div>
+      )}
+
       {/* NAVBAR */}
-      <nav className={`navbar ${burgerMenuActive ? "active" : ""}`}>
+      <nav className="navbar">
+        {/* Info Bar */}
         <div className="navbar-info">
-          <span>
-            <FontAwesomeIcon icon={faClock} /> Mo–Fr: 08:00–18:30 | Sa: 08:00–13:00
-          </span>
+          {openHours.length > 0 && (
+            <span>
+              <FontAwesomeIcon icon={faClock} />{" "}
+              {openHours
+                .map(h =>
+                  `${h.wochentage.join(", ")}: ${
+                    h.geschlossen ? "geschlossen" : h.zeiten.join(", ")
+                  }`
+                )
+                .join(" | ")}
+            </span>
+          )}
           <span>
             <FontAwesomeIcon icon={faPhone} />{" "}
-            <a href="tel:0900989900" className="phone-link">
-              Notfall: 0900 98 99 00
-            </a>
+            <a href="tel:0900989900">Notfall: 0900 98 99 00</a>
           </span>
         </div>
 
         <div className="navbar-container">
           {/* Logo */}
-          <div className="logo-box">
-            <NavLink to="/" onClick={() => setBurgerMenuActive(false)}>
-              {logoUrl ? (
-                <img src={logoUrl} alt="Wegmühle-Apotheke" className="logo" />
-              ) : (
-                <span className="logo-placeholder">Logo</span>
-              )}
-            </NavLink>
-          </div>
+          <NavLink to="/" className="logo-box">
+            {logoUrl ? <img src={logoUrl} alt="Logo" /> : "LOGO"}
+          </NavLink>
 
-          {/* Burger Icon */}
+          {/* Burger */}
           <div
             className="menu-icon"
             onClick={() => setBurgerMenuActive(!burgerMenuActive)}
@@ -130,38 +135,31 @@ function Navbar() {
 
           {/* Navigation */}
           <ul className={`nav-items ${burgerMenuActive ? "open" : ""}`}>
-            <li className="nav-item dropdown">
+            <NavItem to="/" text="Startseite" />
+
+            <li className="dropdown">
               <span>Angebot</span>
               <ul className="dropdown-menu">
                 <NavItem to="/angebote/medikamente" text="Medikamente" />
                 <NavItem to="/angebote/schulmedizin" text="Schulmedizin" />
-                <NavItem to="/angebote/alternativmedizin" text="Alternativmedizin" />
-                <NavItem to="/angebote/herstellung" text="Herstellung" />
-                <NavItem to="/angebote/weitere-produkte" text="Weitere Produkte" />
+                <NavItem
+                  to="/angebote/alternativmedizin"
+                  text="Alternativmedizin"
+                />
               </ul>
             </li>
-
-            <li className="nav-item dropdown">
-              <span>Dienstleistungen</span>
-              <ul className="dropdown-menu">
-                <NavItem to="/dienstleistungen/pharmexpert" text="Pharmexpert" />
-              </ul>
-            </li>
+            <NavItem to="/galerie" text="Galerie" />
 
             <NavItem to="/team" text="Team" />
-            <NavItem to="/galerie" text="Bilder" />
             <NavItem to="/contact" text="Kontakt" />
 
             {!isLoggedIn ? (
               <NavItem to="/login" text="Login" icon={faSignInAlt} />
             ) : (
               <>
-                {userTypes.includes("vorstand") && (
-                  <NavItem to="/vorstand" text="Vorstand" />
-                )}
                 <NavItem to="/profil" text="Profil" />
                 <li>
-                  <button className="nav-link logout" onClick={handleLogout}>
+                  <button className="logout" onClick={handleLogout}>
                     <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                   </button>
                 </li>
@@ -170,17 +168,6 @@ function Navbar() {
           </ul>
         </div>
       </nav>
-
-      {/* Banner dynamisch vom Backend */}
-      {!isLoginPage && (
-        <div className="navbar-banner">
-          {bannerUrl ? (
-            <img src={bannerUrl} alt="Wegmühle-Apotheke Banner" />
-          ) : (
-            <div className="banner-placeholder">Banner hier</div>
-          )}
-        </div>
-      )}
     </>
   );
 }
@@ -192,7 +179,7 @@ function NavItem({ to, text, icon }) {
         to={to}
         className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
       >
-        {icon && <FontAwesomeIcon icon={icon} className="icon" />} {text}
+        {icon && <FontAwesomeIcon icon={icon} />} {text}
       </NavLink>
     </li>
   );
