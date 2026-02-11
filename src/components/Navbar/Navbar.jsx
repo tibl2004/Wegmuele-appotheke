@@ -19,6 +19,7 @@ const OPENHOURS_API = "https://wegm-hle-apotheke-backend.onrender.com/api/oeffnu
 function Navbar() {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
   const [bannerUrl, setBannerUrl] = useState(null);
   const [openHours, setOpenHours] = useState([]);
@@ -27,7 +28,9 @@ function Navbar() {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
 
-
+  // ======================
+  // User & Admin Status
+  // ======================
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
@@ -37,14 +40,17 @@ function Navbar() {
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        setUserTypes(parsedUser?.userTypes || []);
+        const types = parsedUser?.userTypes || [];
+        setIsAdmin(types.includes("admin"));
       } catch {
-        setUserTypes([]);
+        setIsAdmin(false);
       }
     }
   }, []);
 
-  // Banner / Logo laden
+  // ======================
+  // Banner & Logo laden
+  // ======================
   useEffect(() => {
     const fetchMedia = async () => {
       try {
@@ -56,19 +62,21 @@ function Navbar() {
         setLogoUrl(logoRes.data.logoUrl || null);
         setBannerUrl(bannerRes.data.bannerUrl || null);
       } catch (err) {
-        console.error(err);
+        console.error("Fehler beim Laden von Logo/Banner:", err);
       }
     };
 
     fetchMedia();
   }, []);
 
+  // ======================
   // Öffnungszeiten laden
+  // ======================
   useEffect(() => {
     const fetchOpenHours = async () => {
       try {
         const res = await axios.get(OPENHOURS_API);
-        setOpenHours(res.data);
+        setOpenHours(res.data || []);
       } catch (err) {
         console.error("Fehler beim Abrufen der Öffnungszeiten:", err);
       }
@@ -76,9 +84,13 @@ function Navbar() {
     fetchOpenHours();
   }, []);
 
+  // ======================
+  // Logout
+  // ======================
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
+    setIsAdmin(false);
     navigate("/login");
   };
 
@@ -103,7 +115,7 @@ function Navbar() {
             <span>
               <FontAwesomeIcon icon={faClock} />{" "}
               {openHours
-                .map(h =>
+                .map((h) =>
                   `${h.wochentage.join(", ")}: ${
                     h.geschlossen ? "geschlossen" : h.zeiten.join(", ")
                   }`
@@ -147,7 +159,6 @@ function Navbar() {
               </ul>
             </li>
             <NavItem to="/galerie" text="Galerie" />
-
             <NavItem to="/team" text="Team" />
             <NavItem to="/contact" text="Kontakt" />
 
@@ -156,6 +167,7 @@ function Navbar() {
             ) : (
               <>
                 <NavItem to="/profil" text="Profil" />
+                {isAdmin && <li className="admin-label">Admin</li>}
                 <li>
                   <button className="logout" onClick={handleLogout}>
                     <FontAwesomeIcon icon={faSignOutAlt} /> Logout
@@ -170,6 +182,9 @@ function Navbar() {
   );
 }
 
+// ======================
+// NavItem Component
+// ======================
 function NavItem({ to, text, icon }) {
   return (
     <li>
