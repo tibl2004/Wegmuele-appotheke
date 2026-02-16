@@ -1,0 +1,69 @@
+$apotheke-color: #0f766e;
+$bg-color: #f7f7f7;
+$text-color: #1a1a1a;
+
+.dienstleistungen-apotheke {
+  padding: 2rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background-color: $bg-color;
+  color: $text-color;
+
+  h1 {
+    text-align: center;
+    color: $apotheke-color;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    perspective: 1200px;
+
+    .card-inner {
+      position: relative;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      transform-origin: left center; // linker Rand fix
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+
+      img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+      }
+
+      h3 {
+        margin-top: 0.5rem;
+        color: $apotheke-color;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .description {
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 0 1rem;
+        margin-top: 0.3rem;
+      }
+    }
+
+    // ======================
+    // Tür nach innen zack
+    // ======================
+    &:hover .card-inner.open-inward {
+      transform: rotateY(20deg) translateZ(-40px); // rechte Seite geht nach hinten, linker Rand fix
+    }
+  }
+}

@@ -158,6 +158,8 @@ function Navbar() {
                 />
               </ul>
             </li>
+            <NavItem to="/dienstleistungen" text="Dienstleistungen" />
+
             <NavItem to="/galerie" text="Galerie" />
             <NavItem to="/team" text="Team" />
             <NavItem to="/contact" text="Kontakt" />

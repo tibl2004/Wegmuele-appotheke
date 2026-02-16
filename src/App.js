@@ -7,6 +7,8 @@ import Home from "./components/Landingpage/Home";
 import Team from './components/Verwaltung/Team';
 import Contact from './components/Verwaltung/Contact';
 import UnterpunkteManager from './components/Produkte/UnterpunkteManager';
+import DienstleistungenApotheke from './components/Dienstleistungen/DienstleistungenApotheke';
+import DienstleistungDetail from './components/Dienstleistungen/DienstleistungDetail';
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
         <Route path="/team" element={<Team />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/more-products" element={<UnterpunkteManager />} />
+        <Route path="/dienstleistungen" element={<DienstleistungenApotheke />} />
+        <Route path="/dienstleistung/:id" element={<DienstleistungDetail />} />
 
         </Routes>
       </div>

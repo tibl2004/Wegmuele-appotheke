@@ -1,0 +1,111 @@
+.dienst-detail-wrapper {
+    font-family: "Arial, sans-serif";
+    color: #0f766e;
+    padding: 2rem;
+  
+    .back-btn {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+  
+    .dienst-card {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid #0f766e;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+      .dienst-bild {
+        width: 100%;
+        padding-top: 50%;
+        background-size: cover;
+        background-position: center;
+      }
+  
+      .dienst-info {
+        padding: 1.5rem;
+        h1 {
+          margin: 0 0 1rem 0;
+          font-size: 1.8rem;
+        }
+        p {
+          font-size: 1rem;
+          line-height: 1.5;
+        }
+  
+        .admin-actions {
+          margin-top: 1rem;
+          button {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-radius: 0.25rem;
+          }
+          .delete-btn {
+            background: darkred;
+          }
+        }
+      }
+    }
+  
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  
+      .modal {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        width: 400px;
+        max-width: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+  
+        input, textarea {
+          padding: 0.5rem;
+          border: 1px solid #0f766e;
+          border-radius: 0.25rem;
+          width: 100%;
+        }
+  
+        .modal-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+          margin-top: 1rem;
+  
+          button {
+            padding: 0.5rem 1rem;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 0.25rem;
+          }
+          button.cancel {
+            background: #ccc;
+            color: black;
+          }
+          button:not(.cancel) {
+            background: #0f766e;
+          }
+        }
+      }
+    }
+  }
+  
