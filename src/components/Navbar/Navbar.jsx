@@ -150,7 +150,7 @@ function Navbar() {
             <li className="dropdown">
               <span>Angebot</span>
               <ul className="dropdown-menu">
-                <NavItem to="/angebote/medikamente" text="Medikamente" />
+                <NavItem to="/more-products" text="Weitere Produkte" />
                 <NavItem to="/angebote/schulmedizin" text="Schulmedizin" />
                 <NavItem
                   to="/angebote/alternativmedizin"

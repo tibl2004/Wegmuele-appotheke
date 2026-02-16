@@ -6,6 +6,7 @@ import Galerie from "./components/Galerie/Galerie";
 import Home from "./components/Landingpage/Home";
 import Team from './components/Verwaltung/Team';
 import Contact from './components/Verwaltung/Contact';
+import UnterpunkteManager from './components/Produkte/UnterpunkteManager';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/team" element={<Team />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/more-products" element={<UnterpunkteManager />} />
 
         </Routes>
       </div>
