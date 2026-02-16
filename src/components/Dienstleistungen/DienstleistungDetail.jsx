@@ -33,20 +33,23 @@ export default function DienstleistungDetail() {
     }
   }, [token]);
 
-  // Daten laden
-  const loadDienstleistung = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${DIENSTLEISTUNG_API}/${id}`);
-      setDienstleistung(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setError("Dienstleistung konnte nicht geladen werden.");
-      setLoading(false);
-    }
-  };
-
+  useEffect(() => {
+    const loadDienstleistung = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${DIENSTLEISTUNG_API}/${id}`);
+        setDienstleistung(res.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Dienstleistung konnte nicht geladen werden.");
+        setLoading(false);
+      }
+    };
+  
+    loadDienstleistung();
+  }, [id]);
+  
   useEffect(() => {
     loadDienstleistung();
   }, [id]);
