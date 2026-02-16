@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import "./DienstleistungDetail.scss";
 
 const DIENSTLEISTUNG_API = "https://wegm-hle-apotheke-backend.onrender.com/api/dienstleistungen";
