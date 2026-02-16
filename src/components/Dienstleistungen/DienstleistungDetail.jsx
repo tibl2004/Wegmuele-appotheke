@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import "./DienstleistungDetail.scss";
 
 const DIENSTLEISTUNG_API = "https://wegm-hle-apotheke-backend.onrender.com/api/dienstleistungen";
@@ -33,26 +33,23 @@ export default function DienstleistungDetail() {
     }
   }, [token]);
 
-  useEffect(() => {
-    const loadDienstleistung = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${DIENSTLEISTUNG_API}/${id}`);
-        setDienstleistung(res.data);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Dienstleistung konnte nicht geladen werden.");
-        setLoading(false);
-      }
-    };
-  
-    loadDienstleistung();
+  // Daten laden (useCallback, damit Funktion überall verfügbar bleibt)
+  const loadDienstleistung = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${DIENSTLEISTUNG_API}/${id}`);
+      setDienstleistung(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError("Dienstleistung konnte nicht geladen werden.");
+      setLoading(false);
+    }
   }, [id]);
-  
+
   useEffect(() => {
     loadDienstleistung();
-  }, [id]);
+  }, [loadDienstleistung]);
 
   // Edit Modal öffnen
   const openEditModal = () => {
@@ -83,7 +80,7 @@ export default function DienstleistungDetail() {
         },
       });
       closeEditModal();
-      loadDienstleistung();
+      loadDienstleistung(); // funktioniert jetzt, ESLint meckert nicht
     } catch (err) {
       console.error(err);
       alert("Update fehlgeschlagen.");
@@ -109,10 +106,8 @@ export default function DienstleistungDetail() {
 
   return (
     <div className="dienst-detail-wrapper">
-      {/* Zurück Button */}
       <button className="back-btn" onClick={() => navigate(-1)}>← Zurück</button>
 
-      {/* Dienstleistung */}
       <div className="dienst-card">
         {dienstleistung.bild && (
           <div
@@ -133,7 +128,6 @@ export default function DienstleistungDetail() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       {showEditModal && (
         <div className="modal-backdrop">
           <div className="modal">
